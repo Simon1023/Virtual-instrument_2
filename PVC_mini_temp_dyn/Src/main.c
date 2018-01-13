@@ -76,6 +76,13 @@ UART_HandleTypeDef huart2;
 
 SDRAM_HandleTypeDef hsdram1;
 
+struct ROI {
+	int x;
+	int y;
+	int w;
+	int h;
+} gRoi;
+
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 

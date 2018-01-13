@@ -41,6 +41,13 @@ extern volatile uint8_t isRead;
 //extern uint8_t pData[NR][NC];
 extern sd_uchar pData[2592*1944];
 
+extern struct ROI {
+	int x;
+	int y;
+	int w;
+	int h;
+} gRoi;
+
 /* USER CODE END 0 */
 /** @addtogroup STM32_USB_DEVICE_LIBRARY
   * @{
@@ -99,7 +106,8 @@ static int8_t MSC_ImageInfoRead (USBD_HandleTypeDef  *pdev,  uint8_t lun, uint8_
 static int8_t SCSI_ImageInfoRead (USBD_HandleTypeDef  *pdev, uint8_t lun);
 static int8_t SCSI_ClearFlag (USBD_HandleTypeDef  *pdev, uint8_t lun);
 static int8_t MSC_ClearFlag (USBD_HandleTypeDef  *pdev, uint8_t lun, uint8_t *params);
-
+static int8_t MSC_GetRoiInfo (USBD_HandleTypeDef  *pdev, uint8_t lun, uint8_t *params);
+	
 /* USER CODE END 1 */
 static int8_t SCSI_TestUnitReady(USBD_HandleTypeDef  *pdev, uint8_t lun, uint8_t *params);
 static int8_t SCSI_Inquiry(USBD_HandleTypeDef  *pdev, uint8_t lun, uint8_t *params);
@@ -151,6 +159,7 @@ int8_t SCSI_ProcessCmd(USBD_HandleTypeDef  *pdev,
     
   case SCSI_REQUEST_SENSE:
     return SCSI_RequestSense (pdev, lun, params);
+	
   case SCSI_INQUIRY:
     return SCSI_Inquiry(pdev, lun, params);
     
@@ -192,6 +201,10 @@ int8_t SCSI_ProcessCmd(USBD_HandleTypeDef  *pdev,
 	
 	case SCSI_CLEAR_FLAG:
 		return MSC_ClearFlag(pdev, lun, params);
+
+	//20180109 Simon Windows AP sends the information to PVC mini 
+	case SCSI_SEND_ROI_INFO:
+		return MSC_GetRoiInfo(pdev, lun, params);
 	
   default:
     SCSI_SenseCode(pdev, 
@@ -203,6 +216,43 @@ int8_t SCSI_ProcessCmd(USBD_HandleTypeDef  *pdev,
 }
 
 /* USER CODE BEGIN 2 */
+
+//20180109 Simon Windows AP sends the information to PVC mini 
+static int8_t MSC_GetRoiInfo (USBD_HandleTypeDef  *pdev, uint8_t lun, uint8_t *params)
+{
+  USBD_MSC_BOT_HandleTypeDef  *hmsc = (USBD_MSC_BOT_HandleTypeDef*)pdev->pClassData; 
+	//IDLE ªì©l¤Æ
+  if(hmsc->bot_state == USBD_BOT_IDLE)  /* Idle */
+  {
+    /* case 10 : Ho <> Di */
+		/*
+    if ((hmsc->cbw.bmFlags & (0x80)) != 0x80)
+    {
+      SCSI_SenseCode(pdev,
+										 hmsc->cbw.bLUN, 
+										 ILLEGAL_REQUEST, 
+										 INVALID_CDB);
+      return -1;
+    }    
+		*/
+		
+		hmsc->scsi_blk_addr = 0;
+		hmsc->scsi_blk_len = 1;
+    
+    if( SCSI_CheckAddressRange(pdev, lun, hmsc->scsi_blk_addr, hmsc->scsi_blk_len) < 0)
+    {
+      return -1; /* error */
+    }
+    
+		gRoi.x = params[1]| params[2] << 8;
+		gRoi.y = params[3]| params[4] << 8;
+		gRoi.w = params[5]| params[6] << 8;
+		gRoi.h = params[7]| params[8] << 8;
+  }
+	
+	return 0;
+}
+
 static int8_t MSC_FlagRead (USBD_HandleTypeDef  *pdev, uint8_t lun, uint8_t *params)
 {
   

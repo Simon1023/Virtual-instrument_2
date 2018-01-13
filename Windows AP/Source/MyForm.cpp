@@ -231,7 +231,7 @@ Void MyForm::ok_Click(System::Object^  sender, System::EventArgs^  e)
 
 	pData  = (unsigned char*)calloc(roiW*roiH*type/8, sizeof(unsigned char));
 
-	Utility::sendRoi(roiX, roiY, roiW, roiH);
+	Utility::sendRoiInfo(roiX, roiY, roiW, roiH);
 
 	Utility::getRoiImage(pData, type, roiW, roiH);
 

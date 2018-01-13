@@ -12,6 +12,7 @@
 #define SCSI_CHECK_IMAGE_READY	0xD1
 #define SCSI_GET_IMAGE			0xD2
 #define SCSI_CLEAR_FLAG			0xD3
+#define SCSI_SEND_ROI_INFO		0xD4
 
 //image type
 #define BINARY_IMAGE 8
@@ -34,7 +35,7 @@ public:
 	static int checkImageFlag();
 	static int startCapture();
 	static int captureImage(unsigned char* pData, int nc, int nr, int timeout);
-	static int sendRoi(int x, int y, int w, int h);
+	static int sendRoiInfo(USHORT x, USHORT y, USHORT w, USHORT h);
 	static int getRoiImage(unsigned char* pData, int type, int nc, int nr);
 	static void bayer2rgb(unsigned char *pData, unsigned char *cData, int nr, int nc);
 

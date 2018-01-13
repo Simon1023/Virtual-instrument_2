@@ -213,33 +213,26 @@ int Utility::captureImage(unsigned char* pData,int nc, int nr, int timeout)
 	return 0;
 }
 
-int Utility::sendRoi(int x, int y, int w, int h)
+//20180109 Simon Windows AP sends the information to PVC mini 
+int Utility::sendRoiInfo(USHORT x, USHORT y, USHORT w, USHORT h)
 {
-	char data[32];
-	DWORD bytesToWrite = 17;
-	DWORD	bytesWritten = 0;
-	int* intPoint;
+	UCHAR command[CDB12GENERIC_LENGTH] = {0};
+	BYTE status;
+	int datalength=0;
 
-	data[0] = 0xA6;
-	intPoint = (int*)&data[1];
-	*intPoint = x;
+	printf("[sendRoiInfo] x:0x%x, y:0x%x, w:0x%x, h:0x%x\n",x,y,w,h);
 
-	intPoint++;
-	*intPoint = y;
+	command[0] = SCSI_SEND_ROI_INFO;
+	command[1] = x & 0xFF;
+	command[2] = x >> 8 & 0xFF;
+	command[3] = y & 0xFF;
+	command[4] = y >> 8 & 0xFF;
+	command[5] = w & 0xFF;
+	command[6] = w >> 8 & 0xFF;
+	command[7] = h & 0xFF;
+	command[8] = h >> 8 & 0xFF;
 
-	intPoint++;
-	*intPoint = w;
-
-	intPoint++;
-	*intPoint = h;
-
-	if (WriteFile(fileHandle, &data, bytesToWrite, &bytesWritten, NULL) == FALSE)
-	{
-		// error processing code here
-		printf("Fail to write(0x%x)", data[0]);
-
-		return FALSE;
-	}
+	status = SCSICMD(fileHandle, SCSI_IOCTL_DATA_OUT, command, datalength, databuffer);
 
 	return TRUE;
 }
