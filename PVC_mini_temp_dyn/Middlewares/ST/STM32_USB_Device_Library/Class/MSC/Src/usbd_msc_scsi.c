@@ -39,7 +39,7 @@ extern volatile uint8_t isReady;
 extern volatile uint8_t isRead;
 
 //extern uint8_t pData[NR][NC];
-extern sd_uchar pData[2592*1944];
+extern sd_uchar pData[NUM_OF_PIXELS];
 
 extern struct ROI {
 	int x;
@@ -47,6 +47,8 @@ extern struct ROI {
 	int w;
 	int h;
 } gRoi;
+
+uint8_t *pCurCmd =NULL;
 
 /* USER CODE END 0 */
 /** @addtogroup STM32_USB_DEVICE_LIBRARY
@@ -152,6 +154,8 @@ int8_t SCSI_ProcessCmd(USBD_HandleTypeDef  *pdev,
                            uint8_t *params)
 {
   
+	pCurCmd = params;
+	
   switch (params[0])
   {
   case SCSI_TEST_UNIT_READY:
@@ -205,7 +209,28 @@ int8_t SCSI_ProcessCmd(USBD_HandleTypeDef  *pdev,
 	//20180109 Simon Windows AP sends the information to PVC mini 
 	case SCSI_SEND_ROI_INFO:
 		return MSC_GetRoiInfo(pdev, lun, params);
-	
+
+	//20180116 Simon: Windows AP gets the image of ROI from PVC mini 
+	case SCSI_GET_ROI_IMAGE:
+	{
+		char* pSrc = (char*)pData+NC*gRoi.y+gRoi.x;
+		char* pDest = (char*)pData;
+		int i;
+
+		for(i=0;i<gRoi.h;i++)
+		{	
+			int j;
+			
+			//Thre's a restriction of aliment for memcpy
+			for(j=0;j<gRoi.w;j++)
+				*(pDest+j)=	*(pSrc+j);
+			
+			pSrc+=NC;
+			pDest+=gRoi.w;
+		}
+		
+		return MSC_BufferRead(pdev, lun, params);
+	}
   default:
     SCSI_SenseCode(pdev, 
                    lun,
@@ -249,6 +274,8 @@ static int8_t MSC_GetRoiInfo (USBD_HandleTypeDef  *pdev, uint8_t lun, uint8_t *p
 		gRoi.w = params[5]| params[6] << 8;
 		gRoi.h = params[7]| params[8] << 8;
   }
+	
+	hmsc->bot_data_length = 0;
 	
 	return 0;
 }
@@ -448,7 +475,12 @@ static int8_t SCSI_BufferRead (USBD_HandleTypeDef  *pdev, uint8_t lun)
 	int imageSize;
 	
 	image_data = (uint8_t *)pData;
-	imageSize = NUM_OF_PIXELS;
+	
+	//20180116 Simon: Windows AP gets the image of ROI from PVC mini
+	if(pCurCmd[0] == SCSI_GET_ROI_IMAGE)
+		imageSize = gRoi.w*gRoi.h;
+	else
+		imageSize = NUM_OF_PIXELS;
 	
 //	if(isReady)
 //	   audio_data = audio_data1;

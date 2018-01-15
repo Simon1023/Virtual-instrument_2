@@ -47,6 +47,7 @@ namespace VirtualInstrument {
 		int roiW;
 		int roiH;
 		bool isDrag;
+		bool isRoi;
 		System::Drawing::Rectangle theRectangle;
 		Point startPoint;
 		MouseEventArgs^ mouseEventDown;

@@ -104,6 +104,8 @@ int Utility::checkImageFlag()
 
 	status = SCSICMD(fileHandle, SCSI_IOCTL_DATA_IN, CMD, datalength, databuffer);
 
+	//printf("[checkImageFlag]return:%d\n", databuffer[0]);
+
 	return databuffer[0];
 }
 
@@ -114,6 +116,8 @@ int Utility::startCapture()
 
 	UCHAR CMD[CDB12GENERIC_LENGTH];
 	int datalength, j;
+
+	printf("[startCapture]\n");
 
 	//printf("clear flag...\n");
 
@@ -127,7 +131,7 @@ int Utility::startCapture()
 }
 
 //captureImage
-int Utility::captureImage(unsigned char* pData,int nc, int nr, int timeout)
+int Utility::captureImage(unsigned char* pData,int nc, int nr, int timeout , bool bRoi)
 {
 	BYTE m_byCmd[MAX_CMD_LEN];
 	UCHAR CMD[CDB12GENERIC_LENGTH];
@@ -138,6 +142,8 @@ int Utility::captureImage(unsigned char* pData,int nc, int nr, int timeout)
 
 	int i, j, size, t;
 	int counter, imageSize = nr * nc;
+
+	printf("[captureImage] nc:%d,nr:%d,bRoi:%d\n",nc,nr,bRoi);
 
 	//BYTE SCSI_Cmd[2][9]={SCSI_GET_IMAGE,0x00,0x00,0x00,0x00,0x00,0x00, datalength & 0xFF00, datalength & 0x00FF,
 	//					 SCSI_GET_IMAGE,0x00,0x00,0x00,0x00,0x00,0x00, datalength & 0xFF00, datalength & 0x00FF};		
@@ -154,7 +160,12 @@ int Utility::captureImage(unsigned char* pData,int nc, int nr, int timeout)
 	for (i = 0; i < size; i++) {
 		int start_address = (perdata * i) >> 9;
 		SCSI_Cmd[i] = (BYTE*)calloc(9, sizeof(BYTE));
-		SCSI_Cmd[i][0] = SCSI_GET_IMAGE;
+		
+		if (bRoi)
+			SCSI_Cmd[i][0] = SCSI_GET_ROI_IMAGE;
+		else
+			SCSI_Cmd[i][0] = SCSI_GET_IMAGE;
+
 		SCSI_Cmd[i][2] = ((start_address) & 0xFF000000) >> 24;
 		SCSI_Cmd[i][3] = ((start_address) & 0x00FF0000) >> 16;
 		SCSI_Cmd[i][4] = ((start_address) & 0x0000FF00) >> 8;
@@ -170,7 +181,7 @@ int Utility::captureImage(unsigned char* pData,int nc, int nr, int timeout)
 		SCSI_Cmd[size - 1][8] = (tmp) & 0x00FF;
 	}
 
-	//printf("get flag...\n");
+	printf("get flag...\n");
 	i = counter = 0;
 
 	t = clock();
@@ -182,7 +193,7 @@ int Utility::captureImage(unsigned char* pData,int nc, int nr, int timeout)
 		return NULL;
 	}
 
-	//printf("get image...\n");
+	printf("get image...\n");
 
 	while (i < size)
 	{
@@ -190,9 +201,14 @@ int Utility::captureImage(unsigned char* pData,int nc, int nr, int timeout)
 		memcpy(m_byCmd, &SCSI_Cmd[i][0], 9);
 		for (j = 0; j<CDB12GENERIC_LENGTH; j++)
 			CMD[j] = m_byCmd[j];
+
+		printf("SCSICMD[%d]:%x %x %x %x %x %x %x %x %x\n", i, CMD[0], CMD[1], CMD[2], CMD[3], CMD[4], CMD[5], CMD[6], CMD[7], CMD[8]);
+
 		status = SCSICMD(fileHandle, SCSI_IOCTL_DATA_IN, CMD, datalength, databuffer);
 
-		//printf("%d\n", databuffer[0]);
+		printf("command return\n");
+		//printf("status:%d\n", databuffer[0]);
+
 		if (counter + datalength >= imageSize)
 		{
 			//writewav(sampleRate, fileSize, bps, channel, PCM_data);
@@ -233,42 +249,6 @@ int Utility::sendRoiInfo(USHORT x, USHORT y, USHORT w, USHORT h)
 	command[8] = h >> 8 & 0xFF;
 
 	status = SCSICMD(fileHandle, SCSI_IOCTL_DATA_OUT, command, datalength, databuffer);
-
-	return TRUE;
-}
-
-int Utility::getRoiImage(unsigned char* pData, int type, int nc, int nr)
-{
-	DWORD	bytesRead = 0;
-	DWORD	imageSize = type * nr * nc / 8;
-	DWORD	bytesReadTotal = 0;
-	const int perData = 16380;
-
-	printf("[getRoiImage]nc:%d,nr:%d\n", nc, nr);
-
-	if (pData == NULL)
-	{
-		printf("No enough memory space to allocation.\n");
-
-		return FALSE;
-	}
-
-	printf("Start to read %d bytes\n", imageSize);
-
-	while (bytesReadTotal < imageSize)
-	{
-		if (ReadFile(fileHandle, pData + bytesReadTotal, nc, &bytesRead, NULL) != FALSE)
-		{
-			if (bytesRead > 0)
-			{
-				bytesReadTotal += bytesRead;
-
-				//printf("Read %d bytes, total:%d\n", bytesRead, bytesReadTotal);
-			}
-		}
-	}
-
-	printf("End to read %d bytes\n", bytesReadTotal);
 
 	return TRUE;
 }
