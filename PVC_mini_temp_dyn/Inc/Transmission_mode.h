@@ -12,7 +12,7 @@
 //#define NC 2592
 
 #define	FORMAT_GRAY	1
-#define	FORMAT_RGB	3
+#define	FORMAT_RGB	1
 #define FORMAT FORMAT_RGB
 
 #define NUM_OF_PIXELS (NC * NR * FORMAT)
