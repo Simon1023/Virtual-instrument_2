@@ -40,6 +40,7 @@ extern volatile uint8_t isRead;
 
 //extern uint8_t pData[NR][NC];
 extern sd_uchar pData[NUM_OF_PIXELS];
+extern sd_uchar dstBuf[NUM_OF_PIXELS];
 
 extern struct ROI {
 	int x;
@@ -49,6 +50,8 @@ extern struct ROI {
 } gRoi;
 
 uint8_t *pCurCmd =NULL;
+
+int imageProcessing(unsigned char *src , unsigned char *dst , int nr , int nc);
 
 /* USER CODE END 0 */
 /** @addtogroup STM32_USB_DEVICE_LIBRARY
@@ -228,6 +231,9 @@ int8_t SCSI_ProcessCmd(USBD_HandleTypeDef  *pdev,
 			pSrc+=NC;
 			pDest+=gRoi.w;
 		}
+		
+		//2018/01/27 Simon :Image Processing
+		imageProcessing(pData , dstBuf , gRoi.h , gRoi.w);
 		
 		return MSC_BufferRead(pdev, lun, params);
 	}
@@ -478,7 +484,12 @@ static int8_t SCSI_BufferRead (USBD_HandleTypeDef  *pdev, uint8_t lun)
 	
 	//20180116 Simon: Windows AP gets the image of ROI from PVC mini
 	if(pCurCmd[0] == SCSI_GET_ROI_IMAGE)
+	{
 		imageSize = gRoi.w*gRoi.h;
+		
+		//2018/01/27 Simon :Image Processing
+		image_data = dstBuf;
+	}
 	else
 		imageSize = NUM_OF_PIXELS;
 	

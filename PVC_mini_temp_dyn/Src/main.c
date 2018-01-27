@@ -40,6 +40,7 @@
 #include "def_type.h"
 
 #include "Transmission_mode.h"
+#include "binarization.h"
 
 /* USER CODE BEGIN Includes */
 extern sd_uchar OrgImgBuf[];
@@ -87,7 +88,7 @@ struct ROI {
 /* Private variables ---------------------------------------------------------*/
 
 sd_uchar pData[NUM_OF_PIXELS] = {0};
-//uint8_t pData2[NR][NC*3] = {0};
+sd_uchar dstBuf[NUM_OF_PIXELS] = {0};
 
 
 volatile uint8_t isReady = 0;
@@ -847,6 +848,21 @@ int SendImage(uint8_t * ImgBuf)
 		HAL_Delay(20);
 	}
 	return(0);
+}
+
+//2018/01/27 Simon :Image Processing
+int imageProcessing(unsigned char *src , unsigned char *dst , int nr , int nc)
+{
+	uc1D imageSrc,imageDst;
+	
+	imageSrc.nr = imageDst.nr = nr;
+	imageSrc.nc = imageDst.nc = nc;
+	imageSrc.m = src;
+	imageDst.m = dst;
+	
+	binarization(&imageSrc, &imageDst, 128);
+	
+	return 0;
 }
 /* ================================================================================ */
 
