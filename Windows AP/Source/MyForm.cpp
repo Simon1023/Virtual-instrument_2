@@ -102,7 +102,12 @@ Void MyForm::capture_Click(System::Object^  sender, System::EventArgs^  e)
 	if (Utility::captureImage(pData, nr, nc, 50, isRoi)!=0)
 		return;
 
-	Utility::bayer2rgb(pData, cData, nr, nc);
+    //2018/01/27 Simon : ROI after image processing is binarization
+    if (isRoi)
+        memcpy(cData, pData, nr * nc);
+    else
+        Utility::bayer2rgb(pData, cData, nr, nc);
+	
 	free(pData);
 
 	end = clock();
@@ -121,12 +126,20 @@ Void MyForm::capture_Click(System::Object^  sender, System::EventArgs^  e)
 	//巡迴每一個像素
 	for (int y = 0; y < nr; y++) {
 		for (int x = 0; x < nc; x++) {
-			//像素值填入
-			pout[0] = (Byte)*pin;
-			pout[1] = (Byte)*(pin + 1);
-			pout[2] = (Byte)*(pin + 2);
-			pin += 3;
-
+            //2018/01/27 Simon : ROI after image processing is binarization
+            if (isRoi)
+            {
+                pout[0] = pout[1] = pout[2] = (Byte)*pin;
+                pin++;
+            }
+            else
+            {
+                //像素值填入
+                pout[0] = (Byte)*pin;
+                pout[1] = (Byte)*(pin + 1);
+                pout[2] = (Byte)*(pin + 2);
+                pin += 3;
+            }
 			//指到下一個像素資訊
 			pout += 3;
 		}
