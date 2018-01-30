@@ -9,7 +9,7 @@ void binaryErosion(uc1D *ImaSrc, uc1D *ImaDst)
 	for(int i=0;i<ImaSrc->nr;i++)
 		for(int j=0;j<ImaSrc->nc;j++)
 		{
-			if(*pin >= 100)
+			if(*pin >= 150)
 				*pin = 255;
 			else
 				*pin = 0;
