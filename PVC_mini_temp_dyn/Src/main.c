@@ -42,6 +42,7 @@
 #include "Transmission_mode.h"
 #include "binarization.h"
 #include "binaryOpenning.h"
+#include "projection.h"
 
 /* USER CODE BEGIN Includes */
 extern sd_uchar OrgImgBuf[];
@@ -872,6 +873,8 @@ int imageProcessing(unsigned char *src , unsigned char *dst , int nr , int nc)
 	
 	free(imageTemp.m);
 
+	getProjection(&imageDst);
+	
 	return 0;
 }
 /* ================================================================================ */

@@ -332,7 +332,7 @@
               <MiscControls>--C99</MiscControls>
               <Define>USE_HAL_DRIVER,STM32F767xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;../Drivers/STM32F7xx_HAL_Driver/Inc;../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy;../Middlewares/ST/STM32_USB_Device_Library/Core/Inc;../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc;../Drivers/CMSIS/Include;../Drivers/CMSIS/Device/ST/STM32F7xx/Include;..\lib_stm32f7_ov5653;../Middlewares/ST/STM32_USB_Device_Library/Class/MSC/Inc;..\Src\ImageProcess;..\Src\ImageProcess\Basic</IncludePath>
+              <IncludePath>../Inc;../Drivers/STM32F7xx_HAL_Driver/Inc;../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy;../Middlewares/ST/STM32_USB_Device_Library/Core/Inc;../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc;../Drivers/CMSIS/Include;../Drivers/CMSIS/Device/ST/STM32F7xx/Include;..\lib_stm32f7_ov5653;../Middlewares/ST/STM32_USB_Device_Library/Class/MSC/Inc;..\Src\ImageProcess;..\Src\ImageProcess\Basic;..\Src\ImageProcess\Morphology</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -694,6 +694,11 @@
               <FileName>verticalMirror.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Src\ImageProcess\Basic\Src\verticalMirror.c</FilePath>
+            </File>
+            <File>
+              <FileName>projection.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\ImageProcess\Basic\Src\projection.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1069,6 +1074,41 @@
               <FileName>threshold.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Src\ImageProcess\Threshold\Src\threshold.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>ImageProcess/Morphology</GroupName>
+          <Files>
+            <File>
+              <FileName>binaryClosing.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\ImageProcess\Morphology\Src\binaryClosing.c</FilePath>
+            </File>
+            <File>
+              <FileName>binaryDilation.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\ImageProcess\Morphology\Src\binaryDilation.c</FilePath>
+            </File>
+            <File>
+              <FileName>binaryErosion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\ImageProcess\Morphology\Src\binaryErosion.c</FilePath>
+            </File>
+            <File>
+              <FileName>binaryOpenning.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\ImageProcess\Morphology\Src\binaryOpenning.c</FilePath>
+            </File>
+            <File>
+              <FileName>EdgeDetection.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\ImageProcess\Morphology\Src\EdgeDetection.c</FilePath>
+            </File>
+            <File>
+              <FileName>Residual.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\ImageProcess\Morphology\Src\Residual.c</FilePath>
             </File>
           </Files>
         </Group>
