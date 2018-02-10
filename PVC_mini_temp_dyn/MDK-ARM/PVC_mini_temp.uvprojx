@@ -696,9 +696,9 @@
               <FilePath>..\Src\ImageProcess\Basic\Src\verticalMirror.c</FilePath>
             </File>
             <File>
-              <FileName>projection.c</FileName>
+              <FileName>segmentation.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Src\ImageProcess\Basic\Src\projection.c</FilePath>
+              <FilePath>..\Src\ImageProcess\Basic\Src\segmentation.c</FilePath>
             </File>
           </Files>
         </Group>

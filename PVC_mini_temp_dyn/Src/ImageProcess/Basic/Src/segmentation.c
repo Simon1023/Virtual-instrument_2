@@ -1,9 +1,11 @@
-#include "..\projection.h"
+#include "..\segmentation.h"
 
-uc1D *gpProjextion = NULL;
-unsigned char gProjCount =0 ;
+#define MAX_CHAR 8
 
-int getProjection(uc1D *imageSrc)
+CHAR_INFO *gpCharInfo = NULL;
+unsigned char gCharCount =0 ;
+
+int charSegment(uc1D *imageSrc)
 {
 	int x=0;
 	int y=0;			
@@ -14,12 +16,12 @@ int getProjection(uc1D *imageSrc)
 	unsigned char hMax = 0;
 	int projNr = 0;
 	unsigned char index=0;
-	unsigned char charCount = 8;
 	
-	if(gpProjextion == NULL)
-		gpProjextion = (uc1D *)calloc(charCount,sizeof(uc1D));
 	
-	if(gpProjextion == NULL)
+	if(gpCharInfo == NULL)
+		gpCharInfo = (CHAR_INFO *)calloc(MAX_CHAR,sizeof(CHAR_INFO));
+	
+	if(gpCharInfo == NULL)
 		return 1;
 	
 	//horizontal
@@ -61,18 +63,25 @@ int getProjection(uc1D *imageSrc)
 		{
 			if(startX != NO_ASSIGN)
 			{
-				gpProjextion[index].nc = endX-startX;
-				gpProjextion[index].nr = projNr;
-				gpProjextion[index].m = imageSrc->m+startX+hMin*imageSrc->nc;
-
+				/*
+				gpProjection[index].nc = endX-startX;
+				gpProjection[index].nr = projNr;
+				gpProjection[index].m = imageSrc->m+startX+hMin*imageSrc->nc;
+				*/
+				
+				gpCharInfo[index].x = startX;
+				gpCharInfo[index].y = hMin;
+				gpCharInfo[index].nc = endX-startX+1;
+				gpCharInfo[index].nr = projNr;
+				
 				index++;
 				startX = NO_ASSIGN;					
 			}
 		}
 	}
 
-	gProjCount = index;
-	
+	gCharCount = index;
+	//pChar = gpProjection ;
 	
 	//test
 	for(x=0;x<imageSrc->nc;x++)
@@ -81,14 +90,21 @@ int getProjection(uc1D *imageSrc)
 	for(x=0;x<imageSrc->nc;x++)
 		*(imageSrc->m+hMax*imageSrc->nc+x) = 128;	
 	
-	for(index=0;index<gProjCount;index++)
+	for(index=0;index<gCharCount;index++)
 	{
 		for(y=0;y<imageSrc->nr;y++)
 		{
-			*(gpProjextion[index].m + y*imageSrc->nc) = 128;
-			*(gpProjextion[index].m + gpProjextion[index].nc + y*imageSrc->nc) = 128;
+			//*(gpProjection[index].m + y*imageSrc->nc) = 128;
+			//*(gpProjection[index].m + gpProjection[index].nc + y*imageSrc->nc) = 128;
+			*(imageSrc->m + gpCharInfo[index].x + y*imageSrc->nc)=128; 
+			*(imageSrc->m + gpCharInfo[index].x + gpCharInfo[index].nc + y*imageSrc->nc)=128; 
 		}
 	}
 	
 	return 0;
+}
+
+unsigned char getSegmentCount()
+{
+	return gCharCount;
 }

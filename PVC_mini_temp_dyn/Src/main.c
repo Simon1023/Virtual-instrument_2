@@ -42,7 +42,7 @@
 #include "Transmission_mode.h"
 #include "binarization.h"
 #include "binaryOpenning.h"
-#include "projection.h"
+#include "segmentation.h"
 
 /* USER CODE BEGIN Includes */
 extern sd_uchar OrgImgBuf[];
@@ -856,7 +856,7 @@ int SendImage(uint8_t * ImgBuf)
 int imageProcessing(unsigned char *src , unsigned char *dst , int nr , int nc)
 {
 	uc1D imageSrc,imageDst,imageTemp;
-	
+		
 	imageSrc.nr = imageDst.nr = imageTemp.nr = nr;
 	imageSrc.nc = imageDst.nc = imageTemp.nc = nc;
 	imageSrc.m = src;
@@ -873,7 +873,8 @@ int imageProcessing(unsigned char *src , unsigned char *dst , int nr , int nc)
 	
 	free(imageTemp.m);
 
-	getProjection(&imageDst);
+	if(charSegment(&imageDst) != 0)
+		return 1;
 	
 	return 0;
 }
