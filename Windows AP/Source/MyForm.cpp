@@ -16,6 +16,7 @@ MyForm::MyForm()
 {
 	InitializeComponent();
 	roiX = roiY = roiW = roiH = 0;
+    pCharInfo = calloc(16, sizeof(SEG_CHAR_INFO));
 }
 
 MyForm::~MyForm()
@@ -251,6 +252,8 @@ Void MyForm::ok_Click(System::Object^  sender, System::EventArgs^  e)
 	Utility::sendRoiInfo(roiX, roiY, roiW, roiH);
 
 	MyForm::capture_Click(sender, e);
+
+    Utility::getSegmentInfo((UCHAR*)pCharInfo);
 }
 
 Void MyForm::roiDigit_Click(System::Object^  sender, System::EventArgs^  e) 

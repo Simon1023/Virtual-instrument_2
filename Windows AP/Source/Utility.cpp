@@ -253,6 +253,45 @@ int Utility::sendRoiInfo(USHORT x, USHORT y, USHORT w, USHORT h)
 	return TRUE;
 }
 
+//20180220 Simon: Send the command to PVC mini to get the count of segmented characters 
+int Utility::getSegmentCount()
+{
+    BYTE scsiCmd[9] = { SCSI_GET_SEGMENT_COUNT,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };
+    int datalength=1;
+    UCHAR buf=0;
+
+    SCSICMD(fileHandle, SCSI_IOCTL_DATA_IN, scsiCmd, datalength, &buf);
+
+    printf("[getSegmentCount]return:%d\n", buf);
+
+    return buf;
+}
+
+//20180220 Simon: Send the command to PVC mini to get the information of segmented characters 
+int Utility::getSegmentInfo(UCHAR *buf)
+{
+    UCHAR scsiCmd[9] = { SCSI_GET_SEGMENT_INFO,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };
+    int dataLength;
+
+    printf("getSegmentInfo\n");
+
+    dataLength = getSegmentCount() * sizeof(SEG_CHAR_INFO);
+
+    SCSICMD(fileHandle, SCSI_IOCTL_DATA_IN, scsiCmd, dataLength, buf);
+
+    //test
+    int count = getSegmentCount();
+    SEG_CHAR_INFO *pCharInfo = (SEG_CHAR_INFO *)buf;
+
+    printf("count = %d\n", count);
+
+    for (int i = 0; i < count; i++, pCharInfo++)
+    {
+        printf("[%d] x:%d ,y:%d ,nr:%d ,nc:%d\n", i , pCharInfo->x, pCharInfo->y, pCharInfo->nr, pCharInfo->nc);
+    }
+ 
+    return 0;
+}
 void Utility::bayer2rgb(unsigned char *pData, unsigned char *cData, int nr, int nc)
 {
 	int i, j;
