@@ -5,7 +5,7 @@
 CHAR_INFO *gpCharInfo = NULL;
 unsigned char gCharCount =0 ;
 
-int charSegment(uc1D *imageSrc)
+int segment(uc1D *imageSrc)
 {
 	int x=0;
 	int y=0;			
@@ -104,7 +104,12 @@ int charSegment(uc1D *imageSrc)
 	return 0;
 }
 
-unsigned char getSegmentCount()
+unsigned char segmentGetCount()
 {
-	return gCharCount;
+    return gCharCount;
+}
+
+CHAR_INFO * segmentGetInfo()
+{
+    return gpCharInfo;
 }

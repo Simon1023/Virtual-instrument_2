@@ -88,6 +88,8 @@
 #define SCSI_CLEAR_FLAG															0xD3
 #define SCSI_SEND_ROI_INFO													0xD4
 #define SCSI_GET_ROI_IMAGE													0xD5
+#define SCSI_GET_SEGMENT_COUNT											0xD6
+#define SCSI_GET_SEGMENT_INFO												0xD7
 
 #define NO_SENSE                                    0
 #define RECOVERED_ERROR                             1

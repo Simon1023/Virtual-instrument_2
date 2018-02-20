@@ -31,6 +31,7 @@
 #include "usbd_msc.h"
 #include "usbd_msc_data.h"
 #include "def_type.h"
+#include "segmentation.h"
 
 /* USER CODE BEGIN 0 */
 #include "Transmission_mode.h"
@@ -112,7 +113,9 @@ static int8_t SCSI_ImageInfoRead (USBD_HandleTypeDef  *pdev, uint8_t lun);
 static int8_t SCSI_ClearFlag (USBD_HandleTypeDef  *pdev, uint8_t lun);
 static int8_t MSC_ClearFlag (USBD_HandleTypeDef  *pdev, uint8_t lun, uint8_t *params);
 static int8_t MSC_GetRoiInfo (USBD_HandleTypeDef  *pdev, uint8_t lun, uint8_t *params);
-	
+static int8_t MSC_GetSegmentCount (USBD_HandleTypeDef  *pdev, uint8_t lun, uint8_t *params);
+static int8_t MSC_GetSegmentInfo (USBD_HandleTypeDef  *pdev, uint8_t lun, uint8_t *params);
+
 /* USER CODE END 1 */
 static int8_t SCSI_TestUnitReady(USBD_HandleTypeDef  *pdev, uint8_t lun, uint8_t *params);
 static int8_t SCSI_Inquiry(USBD_HandleTypeDef  *pdev, uint8_t lun, uint8_t *params);
@@ -134,6 +137,8 @@ static int8_t SCSI_ProcessRead (USBD_HandleTypeDef  *pdev,
 
 static int8_t SCSI_ProcessWrite (USBD_HandleTypeDef  *pdev,
                                  uint8_t lun);
+static int8_t SCSI_ReadSegCount (USBD_HandleTypeDef  *pdev, uint8_t lun);
+static int8_t SCSI_ReadSegInfo(USBD_HandleTypeDef *pdev, uint8_t lun, uint32_t length);
 /**
   * @}
   */ 
@@ -237,6 +242,19 @@ int8_t SCSI_ProcessCmd(USBD_HandleTypeDef  *pdev,
 		
 		return MSC_BufferRead(pdev, lun, params);
 	}
+	
+	//20180210 Simon : Send the count of characters
+	case SCSI_GET_SEGMENT_COUNT:
+	{
+		return MSC_GetSegmentCount(pdev, lun, params);
+	}
+
+	//20180220 Simon: Get the command from PC to get the information of segmented characters
+	case SCSI_GET_SEGMENT_INFO:
+	{
+		return MSC_GetSegmentInfo(pdev, lun, params);
+	}
+	
   default:
     SCSI_SenseCode(pdev, 
                    lun,
@@ -285,6 +303,127 @@ static int8_t MSC_GetRoiInfo (USBD_HandleTypeDef  *pdev, uint8_t lun, uint8_t *p
 	
 	return 0;
 }
+
+//20180210 Simon : Send the count of characters
+static int8_t MSC_GetSegmentCount (USBD_HandleTypeDef  *pdev, uint8_t lun, uint8_t *params)
+{
+  USBD_MSC_BOT_HandleTypeDef  *hmsc = (USBD_MSC_BOT_HandleTypeDef*)pdev->pClassData; 
+	//IDLE 初始化
+  if(hmsc->bot_state == USBD_BOT_IDLE)  /* Idle */
+  {
+    /* case 10 : Ho <> Di */
+    if ((hmsc->cbw.bmFlags & (0x80)) != 0x80)
+    {
+      SCSI_SenseCode(pdev,
+										 hmsc->cbw.bLUN, 
+										 ILLEGAL_REQUEST, 
+										 INVALID_CDB);
+      return -1;
+    }    
+		
+		hmsc->scsi_blk_addr = 0;
+		hmsc->scsi_blk_len = 1;
+    
+    if( SCSI_CheckAddressRange(pdev, lun, hmsc->scsi_blk_addr, hmsc->scsi_blk_len) < 0)
+    {
+      return -1; /* error */
+    }
+    
+    hmsc->bot_state = USBD_BOT_DATA_IN;
+//    hmsc->scsi_blk_addr *= hmsc->scsi_blk_size;
+//    hmsc->scsi_blk_len  *= hmsc->scsi_blk_size;
+    
+  }
+  hmsc->bot_data_length = 1;  
+  
+  return SCSI_ReadSegCount(pdev, lun); 
+}
+
+static int8_t SCSI_ReadSegCount (USBD_HandleTypeDef  *pdev, uint8_t lun)
+{
+  USBD_MSC_BOT_HandleTypeDef  *hmsc = (USBD_MSC_BOT_HandleTypeDef*)pdev->pClassData; 
+  uint32_t len =1;;
+  uint8_t  count = segmentGetCount();
+		  
+	hmsc->bot_state = USBD_BOT_LAST_DATA_IN;
+  USBD_LL_Transmit (pdev, 
+             MSC_EPIN_ADDR,
+             &count,
+             len);
+  
+  hmsc->scsi_blk_addr   += len; 
+  hmsc->scsi_blk_len    -= len;  
+  
+  /* case 6 : Hi = Di */
+  hmsc->csw.dDataResidue -= len;
+  
+  if (hmsc->scsi_blk_len == 0)
+  {
+    hmsc->bot_state = USBD_BOT_LAST_DATA_IN;
+  }
+  return 0;
+}
+
+//20180220 Simon: Get the command from PC to get the information of segmented characters 
+static int8_t MSC_GetSegmentInfo (USBD_HandleTypeDef  *pdev, uint8_t lun, uint8_t *params)
+{
+  USBD_MSC_BOT_HandleTypeDef  *hmsc = (USBD_MSC_BOT_HandleTypeDef*)pdev->pClassData;
+	uint32_t length;
+	
+	//IDLE 初始化
+  if(hmsc->bot_state == USBD_BOT_IDLE)  /* Idle */
+  {
+    /* case 10 : Ho <> Di */
+    if ((hmsc->cbw.bmFlags & (0x80)) != 0x80)
+    {
+      SCSI_SenseCode(pdev,
+										 hmsc->cbw.bLUN, 
+										 ILLEGAL_REQUEST, 
+										 INVALID_CDB);
+      return -1;
+    }    
+		
+		hmsc->scsi_blk_addr = 0;
+		hmsc->scsi_blk_len = length = segmentGetCount()*sizeof(CHAR_INFO);
+    
+    if( SCSI_CheckAddressRange(pdev, lun, hmsc->scsi_blk_addr, hmsc->scsi_blk_len) < 0)
+    {
+      return -1; /* error */
+    }
+    
+    hmsc->bot_state = USBD_BOT_DATA_IN;    
+  }
+  hmsc->bot_data_length = MSC_MEDIA_PACKET;  
+  
+  return SCSI_ReadSegInfo(pdev, lun, length); 
+}
+
+//20180220 Simon: Reply the information of segmented characters to PC
+static int8_t SCSI_ReadSegInfo(USBD_HandleTypeDef *pdev, uint8_t lun, uint32_t length)
+{
+  USBD_MSC_BOT_HandleTypeDef  *hmsc = (USBD_MSC_BOT_HandleTypeDef*)pdev->pClassData; 
+	uint8_t *pBuf = (uint8_t *)segmentGetInfo();
+	uint32_t len = length;
+	
+	hmsc->bot_state = USBD_BOT_LAST_DATA_IN;
+  USBD_LL_Transmit (pdev, 
+             MSC_EPIN_ADDR,
+             pBuf,
+             len);
+  
+  hmsc->scsi_blk_addr   += len; 
+  hmsc->scsi_blk_len    -= len;  
+  
+  /* case 6 : Hi = Di */
+  hmsc->csw.dDataResidue -= len;
+  
+  if (hmsc->scsi_blk_len == 0)
+  {
+    hmsc->bot_state = USBD_BOT_LAST_DATA_IN;
+  }
+  return 0;
+}
+
 
 static int8_t MSC_FlagRead (USBD_HandleTypeDef  *pdev, uint8_t lun, uint8_t *params)
 {

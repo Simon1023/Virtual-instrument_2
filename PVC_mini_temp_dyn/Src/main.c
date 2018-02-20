@@ -873,8 +873,8 @@ int imageProcessing(unsigned char *src , unsigned char *dst , int nr , int nc)
 	
 	free(imageTemp.m);
 
-	if(charSegment(&imageDst) != 0)
-		return 1;
+    if(segment(&imageDst) != 0)
+        return 1;
 	
 	return 0;
 }

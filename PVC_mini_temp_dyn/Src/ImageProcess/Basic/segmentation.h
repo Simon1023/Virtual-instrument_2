@@ -17,7 +17,8 @@ typedef struct charInfo{
 }CHAR_INFO;
 
 
-int charSegment(uc1D *imageSrc);
-unsigned char getSegmentCount();
+int segment(uc1D *imageSrc);
+unsigned char segmentGetCount();
+CHAR_INFO * segmentGetInfo();
 
 #endif
