@@ -34,6 +34,7 @@ Void MyForm::MyForm_Load(System::Object^  sender, System::EventArgs^  e)
 	roiDigit->Enabled = false;
 	roiWave->Enabled = false;
 	ok->Enabled = false;
+    textBox_RGB->Enabled = false;
 	isRoi = false;
 }
 
@@ -247,7 +248,27 @@ Void MyForm::ok_Click(System::Object^  sender, System::EventArgs^  e)
 
 	roiDigit->Enabled = false;
 	roiWave->Enabled = false;
-	isRoi = true;
+
+    if (textBox_RGB->TextLength == 0)
+    {
+        out_message->Text = "Error: The value within RGB filter must be 0~255\n";
+
+        return;
+    }
+
+    int rgbMum = Convert::ToInt32(textBox_RGB->Text);
+    if (rgbMum < 0 || rgbMum>255)
+    {
+        out_message->Text = "Error: The value within RGB filter must be 0~255\n";
+
+        return;
+    }
+    else
+    {
+        out_message->Text = "";
+        printf("RGB filter: %d\n", rgbMum);
+    }
+    isRoi = true;
 
 	Utility::sendRoiInfo(roiX, roiY, roiW, roiH);
 
@@ -259,11 +280,13 @@ Void MyForm::ok_Click(System::Object^  sender, System::EventArgs^  e)
 Void MyForm::roiDigit_Click(System::Object^  sender, System::EventArgs^  e) 
 {
 	roiWave->Enabled = false;
+    textBox_RGB->Enabled = true;
 }
 
 System::Void MyForm::roiWave_Click(System::Object^  sender, System::EventArgs^  e) 
 {
 	roiDigit->Enabled = false;
+    textBox_RGB->Enabled = true;
 }
 
 System::Void MyForm::pictureBox1_Click(System::Object^  sender, System::EventArgs^  e) 
@@ -340,6 +363,7 @@ void MyForm::pictureBox1_MouseUp(Object^ /*sender*/, System::Windows::Forms::Mou
 		isDrag = false;
 
 		ok->Enabled = true;
+        textBox_RGB->Enabled = true;
 
 		if (mouseEventDown->X < e->X)
 		{
