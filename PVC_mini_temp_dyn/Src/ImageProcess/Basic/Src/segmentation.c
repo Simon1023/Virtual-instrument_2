@@ -1,6 +1,7 @@
 #include "..\segmentation.h"
 
 #define MAX_CHAR 8
+#define THRESHOLD 10
 
 CHAR_INFO *gpCharInfo = NULL;
 unsigned char gCharCount =0 ;
@@ -33,7 +34,7 @@ int segment(uc1D *imageSrc)
 				count++;
 		}
 		
-		if(count>(imageSrc->nc/20))
+		if(count>(imageSrc->nc/THRESHOLD))
 		{
 			if(hMin==0)
 				hMin = y;
@@ -52,7 +53,7 @@ int segment(uc1D *imageSrc)
 				count++;			
 		}
 		
-		if( count>(imageSrc->nr/20))
+		if( count>(imageSrc->nr/THRESHOLD))
 		{
 			if(startX == NO_ASSIGN)
 				startX = x;
