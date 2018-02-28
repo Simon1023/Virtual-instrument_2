@@ -395,6 +395,10 @@ void MyForm::pictureBox1_MouseUp(Object^ /*sender*/, System::Windows::Forms::Mou
 		if (roiW % 4 != 0)
 			roiW = (roiW / 4 + 1) * 4;
 
+        //20180208 Simon: Because of the format is bayer filter
+        if (roiH % 2 != 0)
+            roiH++;
+
 		//Point startPoint = theRectangle.Location;
 
 		char str[128];
