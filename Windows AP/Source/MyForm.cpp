@@ -399,6 +399,12 @@ void MyForm::pictureBox1_MouseUp(Object^ /*sender*/, System::Windows::Forms::Mou
         if (roiH % 2 != 0)
             roiH++;
 
+        if (roiX % 2 != 0)
+            roiX--;
+
+        if (roiY % 2 != 0)
+            roiY--;
+
 		//Point startPoint = theRectangle.Location;
 
 		char str[128];
