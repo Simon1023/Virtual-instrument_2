@@ -9,15 +9,19 @@ void binaryDilation(uc1D *ImaSrc, uc1D *ImaDst)
 	for(int i=0;i<ImaSrc->nr;i++)
 		for(int j=0;j<ImaSrc->nc;j++)
 		{
+            //20180228 Simon: No need to do binaration here
+            /*
 			if(*pin >= 100)
 				*pin = 255;
 			else
 				*pin = 0;
+            */
+            
 			*pout = *pin;
 			pin++;
 			pout++;
 		}
-	
+
 	pin = ImaSrc->m + 1 + ImaSrc->nc;
 	pout = ImaDst->m + 1 + ImaDst->nc;
 

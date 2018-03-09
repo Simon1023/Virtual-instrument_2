@@ -700,6 +700,11 @@
               <FileType>1</FileType>
               <FilePath>..\Src\ImageProcess\Basic\Src\segmentation.c</FilePath>
             </File>
+            <File>
+              <FileName>bayer2binary.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\ImageProcess\Basic\Src\bayer2binary.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

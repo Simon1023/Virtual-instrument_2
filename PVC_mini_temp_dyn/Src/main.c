@@ -43,6 +43,7 @@
 #include "binarization.h"
 #include "binaryOpenning.h"
 #include "segmentation.h"
+#include "bayer2binary.h"
 
 /* USER CODE BEGIN Includes */
 extern sd_uchar OrgImgBuf[];
@@ -855,22 +856,26 @@ int SendImage(uint8_t * ImgBuf)
 //2018/01/27 Simon :Image Processing
 int imageProcessing(unsigned char *src , unsigned char *dst , int nr , int nc)
 {
-	uc1D imageSrc,imageDst,imageTemp;
+	uc1D imageSrc,imageDst,imageTemp,imageBin;
 		
-	imageSrc.nr = imageDst.nr = imageTemp.nr = nr;
-	imageSrc.nc = imageDst.nc = imageTemp.nc = nc;
+	imageSrc.nr = imageDst.nr = imageTemp.nr = imageBin.nr = nr;
+	imageSrc.nc = imageDst.nc = imageTemp.nc = imageBin.nc = nc;
 	imageSrc.m = src;
 	imageDst.m = dst;
 	imageTemp.m = (unsigned char*)calloc(nr*nc,sizeof(unsigned char));
-	
+    
 	//2018/01/28 Simon: binaryErosion includes binarization
 	//binarization(&imageSrc, &imageBin, 128);
 	
+    //20180228 Simon: Transfer bayer to RGB and transfer RGB to binary.
+    imageBin.m = dst;
+    bayer2binary(&imageSrc,&imageBin,255,255,255);
+    
 	//2018/01/28 Simon: Openning caculation
 	//binaryOpenning(&imageSrc, &imageDst);
-	binaryErosion(&imageSrc, &imageTemp);
-	binaryDilation(&imageTemp, &imageDst);
-	
+	binaryDilation(&imageBin, &imageTemp);
+	binaryErosion(&imageTemp, &imageDst);
+    
 	free(imageTemp.m);
 
     if(segment(&imageDst) != 0)
