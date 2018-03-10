@@ -85,6 +85,9 @@ struct ROI {
 	int y;
 	int w;
 	int h;
+    unsigned char r;
+    unsigned char g;
+    unsigned char b;
 } gRoi;
 
 /* USER CODE BEGIN PV */
@@ -869,7 +872,7 @@ int imageProcessing(unsigned char *src , unsigned char *dst , int nr , int nc)
 	
     //20180228 Simon: Transfer bayer to RGB and transfer RGB to binary.
     imageBin.m = dst;
-    bayer2binary(&imageSrc,&imageBin,255,255,255);
+    bayer2binary(&imageSrc,&imageBin,gRoi.r,gRoi.g,gRoi.b);
     
 	//2018/01/28 Simon: Openning caculation
 	//binaryOpenning(&imageSrc, &imageDst);

@@ -48,6 +48,9 @@ extern struct ROI {
 	int y;
 	int w;
 	int h;
+    unsigned char r;
+    unsigned char g;
+    unsigned char b;
 } gRoi;
 
 uint8_t *pCurCmd =NULL;
@@ -297,6 +300,10 @@ static int8_t MSC_GetRoiInfo (USBD_HandleTypeDef  *pdev, uint8_t lun, uint8_t *p
 		gRoi.y = params[3]| params[4] << 8;
 		gRoi.w = params[5]| params[6] << 8;
 		gRoi.h = params[7]| params[8] << 8;
+        
+        gRoi.r = params[9];
+        gRoi.g = params[10];
+        gRoi.b = params[11];
   }
 	
 	hmsc->bot_data_length = 0;

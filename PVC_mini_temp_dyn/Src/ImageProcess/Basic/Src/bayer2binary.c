@@ -16,36 +16,7 @@ void bayer2binary(uc1D *pSrc, uc1D *pDst, unsigned char thrR, unsigned char thrG
     for(index=0;index<nc*nr;index++)
      pDst->m[index] = pSrc->m[index];
     */
-    
-    /*
-    for(index=0;index<nc*nr;index++)
-    {
-        if(pSrc->m[index] > 100)
-			pDst->m[index] = 255;
-		else
-			pDst->m[index] = 0;		
-    }
-    */
-    /*
-    unsigned char *pin = pSrc->m;
-	unsigned char *pout = pDst->m;
-	
-	for(int i=0;i<pSrc->nr;i++)    
-		for(int j=0;j<pSrc->nc;j++)
-		{
-			if(*pin >= 150)
-				*pin = 255;
-			else
-				*pin = 0;
-            
-			*pout = *pin;
-			pin++;
-			pout++;
-		}
         
-    return;
-    */
-    
 	for (i = 1; i<nr - 1; i++)
 	{
 		for (j = 1; j<nc - 1; j++)
