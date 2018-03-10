@@ -230,7 +230,7 @@ int Utility::captureImage(unsigned char* pData,int nc, int nr, int timeout , boo
 }
 
 //20180109 Simon Windows AP sends the information to PVC mini 
-int Utility::sendRoiInfo(USHORT x, USHORT y, USHORT w, USHORT h)
+int Utility::sendRoiInfo(USHORT x, USHORT y, USHORT w, USHORT h, UCHAR r, UCHAR g, UCHAR b)
 {
 	UCHAR command[CDB12GENERIC_LENGTH] = {0};
 	BYTE status;
@@ -247,6 +247,9 @@ int Utility::sendRoiInfo(USHORT x, USHORT y, USHORT w, USHORT h)
 	command[6] = w >> 8 & 0xFF;
 	command[7] = h & 0xFF;
 	command[8] = h >> 8 & 0xFF;
+    command[9] = r;
+    command[10] = g;
+    command[11] = b;
 
 	status = SCSICMD(fileHandle, SCSI_IOCTL_DATA_OUT, command, datalength, databuffer);
 

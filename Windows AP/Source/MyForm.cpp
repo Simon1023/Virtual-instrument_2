@@ -34,7 +34,9 @@ Void MyForm::MyForm_Load(System::Object^  sender, System::EventArgs^  e)
 	roiDigit->Enabled = false;
 	roiWave->Enabled = false;
 	ok->Enabled = false;
-    textBox_RGB->Enabled = false;
+    textBox_R->Enabled = false;
+    textBox_G->Enabled = false;
+    textBox_B->Enabled = false;
 	isRoi = false;
 }
 
@@ -249,15 +251,18 @@ Void MyForm::ok_Click(System::Object^  sender, System::EventArgs^  e)
 	roiDigit->Enabled = false;
 	roiWave->Enabled = false;
 
-    if (textBox_RGB->TextLength == 0)
+    if (textBox_R->TextLength == 0 || textBox_G->TextLength == 0 || textBox_B->TextLength == 0)
     {
         out_message->Text = "Error: The value within RGB filter must be 0~255\n";
 
         return;
     }
 
-    int rgbMum = Convert::ToInt32(textBox_RGB->Text);
-    if (rgbMum < 0 || rgbMum>255)
+    int rNum = Convert::ToInt32(textBox_R->Text);
+    int gNum = Convert::ToInt32(textBox_G->Text);
+    int bNum = Convert::ToInt32(textBox_B->Text);
+
+    if (rNum < 0 || rNum>255 || gNum < 0 || gNum>255 || bNum < 0 || bNum>255)
     {
         out_message->Text = "Error: The value within RGB filter must be 0~255\n";
 
@@ -266,11 +271,11 @@ Void MyForm::ok_Click(System::Object^  sender, System::EventArgs^  e)
     else
     {
         out_message->Text = "";
-        printf("RGB filter: %d\n", rgbMum);
+        printf("RGB filter: %d,%d,%d\n",rNum,gNum,bNum);
     }
     isRoi = true;
 
-	Utility::sendRoiInfo(roiX, roiY, roiW, roiH);
+	Utility::sendRoiInfo(roiX, roiY, roiW, roiH, rNum, gNum, bNum);
 
 	MyForm::capture_Click(sender, e);
 
@@ -280,13 +285,11 @@ Void MyForm::ok_Click(System::Object^  sender, System::EventArgs^  e)
 Void MyForm::roiDigit_Click(System::Object^  sender, System::EventArgs^  e) 
 {
 	roiWave->Enabled = false;
-    textBox_RGB->Enabled = true;
 }
 
 System::Void MyForm::roiWave_Click(System::Object^  sender, System::EventArgs^  e) 
 {
 	roiDigit->Enabled = false;
-    textBox_RGB->Enabled = true;
 }
 
 System::Void MyForm::pictureBox1_Click(System::Object^  sender, System::EventArgs^  e) 
@@ -363,7 +366,9 @@ void MyForm::pictureBox1_MouseUp(Object^ /*sender*/, System::Windows::Forms::Mou
 		isDrag = false;
 
 		ok->Enabled = true;
-        textBox_RGB->Enabled = true;
+        textBox_R->Enabled = true;
+        textBox_G->Enabled = true;
+        textBox_B->Enabled = true;
 
 		if (mouseEventDown->X < e->X)
 		{

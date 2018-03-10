@@ -45,7 +45,7 @@ public:
 	static int checkImageFlag();
 	static int startCapture();
 	static int captureImage(unsigned char* pData, int nc, int nr, int timeout, bool bRoi);
-	static int sendRoiInfo(USHORT x, USHORT y, USHORT w, USHORT h);
+	static int sendRoiInfo(USHORT x, USHORT y, USHORT w, USHORT h, UCHAR r, UCHAR g, UCHAR b);
 	static int getRoiImage(unsigned char* pData, int type, int nc, int nr);
     static int getSegmentCount();
     static int getSegmentInfo(UCHAR *buf);

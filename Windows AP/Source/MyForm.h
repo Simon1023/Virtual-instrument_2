@@ -32,7 +32,9 @@ namespace VirtualInstrument {
 		System::Windows::Forms::Panel^  panel1;
 		System::Windows::Forms::PictureBox^  pictureBox1;
 		System::Windows::Forms::Label^  out_message;
-        System::Windows::Forms::TextBox^  textBox_RGB;
+        System::Windows::Forms::TextBox^  textBox_R;
+        System::Windows::Forms::TextBox^  textBox_G;
+        System::Windows::Forms::TextBox^  textBox_B;
 
         System::Windows::Forms::Label^  label_RGB;
         Bitmap^ resultImage;
@@ -75,7 +77,9 @@ namespace VirtualInstrument {
 			this->ok = (gcnew System::Windows::Forms::Button());
 			this->roiDigit = (gcnew System::Windows::Forms::Button());
 			this->roiWave = (gcnew System::Windows::Forms::Button());
-            this->textBox_RGB = (gcnew System::Windows::Forms::TextBox());
+            this->textBox_R = (gcnew System::Windows::Forms::TextBox());
+            this->textBox_G = (gcnew System::Windows::Forms::TextBox());
+            this->textBox_B = (gcnew System::Windows::Forms::TextBox());
             this->label_RGB = (gcnew System::Windows::Forms::Label());
 			this->panel1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
@@ -173,21 +177,35 @@ namespace VirtualInstrument {
 			this->roiWave->UseVisualStyleBackColor = true;
 			this->roiWave->Click += gcnew System::EventHandler(this, &MyForm::roiWave_Click);
             // 
-            // textBox_RGB
+            // textBox_R
             // 
-            this->textBox_RGB->Location = System::Drawing::Point(570, 534);
-            this->textBox_RGB->Name = L"textBox_RGB";
-            this->textBox_RGB->Size = System::Drawing::Size(76, 22);
-            this->textBox_RGB->TabIndex = 8;
+            this->textBox_R->Location = System::Drawing::Point(570, 534);
+            this->textBox_R->Name = L"textBox_RGB";
+            this->textBox_R->Size = System::Drawing::Size(25, 22);
+            this->textBox_R->TabIndex = 8;
+            // 
+            // textBox_G
+            // 
+            this->textBox_G->Location = System::Drawing::Point(595, 534);
+            this->textBox_G->Name = L"textBox_G";
+            this->textBox_G->Size = System::Drawing::Size(25, 22);
+            this->textBox_G->TabIndex = 9;
+            // 
+            // textBox_B
+            // 
+            this->textBox_B->Location = System::Drawing::Point(620, 534);
+            this->textBox_B->Name = L"textBox_B";
+            this->textBox_B->Size = System::Drawing::Size(25, 22);
+            this->textBox_B->TabIndex = 10;
             // 
             // label_RGB
             // 
             this->label_RGB->AutoSize = true;
-            this->label_RGB->Location = System::Drawing::Point(570, 522);
+            this->label_RGB->Location = System::Drawing::Point(550, 522);
             this->label_RGB->Name = L"label_RGB";
             this->label_RGB->Size = System::Drawing::Size(54, 12);
-            this->label_RGB->TabIndex = 9;
-            this->label_RGB->Text = L"RGB filter";
+            this->label_RGB->TabIndex = 11;
+            this->label_RGB->Text = L"Filter R     G     B";
             // 
 			// MyForm
 			// 
@@ -203,7 +221,9 @@ namespace VirtualInstrument {
 			this->Controls->Add(this->roiDigit);
 			this->Controls->Add(this->roiWave);
             this->Controls->Add(this->label_RGB);
-            this->Controls->Add(this->textBox_RGB);
+            this->Controls->Add(this->textBox_R);
+            this->Controls->Add(this->textBox_G);
+            this->Controls->Add(this->textBox_B);
             this->Name = L"MyForm";
 			this->Text = L"Virtual instrument";
 			this->Load += gcnew System::EventHandler(this, &MyForm::MyForm_Load);
