@@ -48,7 +48,8 @@ public:
 	static int sendRoiInfo(USHORT x, USHORT y, USHORT w, USHORT h, UCHAR r, UCHAR g, UCHAR b);
 	static int getRoiImage(unsigned char* pData, int type, int nc, int nr);
     static int getSegmentCount();
-    static int getSegmentInfo(UCHAR *buf);
+    static void getSegmentInfo(UCHAR *buf);
+    static void pnpDataCollect(unsigned char *img, int roiH, int roiW);
 	static void bayer2rgb(unsigned char *pData, unsigned char *cData, int nr, int nc);
 
 private:

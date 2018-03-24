@@ -16,7 +16,7 @@ MyForm::MyForm()
 {
 	InitializeComponent();
 	roiX = roiY = roiW = roiH = 0;
-    pCharInfo = calloc(16, sizeof(SEG_CHAR_INFO));
+    //pCharInfo = calloc(16, sizeof(SEG_CHAR_INFO));
 }
 
 MyForm::~MyForm()
@@ -103,7 +103,7 @@ Void MyForm::capture_Click(System::Object^  sender, System::EventArgs^  e)
 
 	Utility::startCapture();
 
-	if (Utility::captureImage(pData, nr, nc, 50, isRoi)!=0)
+	if (Utility::captureImage(pData, nc, nr, 50, isRoi)!=0)
 		return;
 
     //2018/01/27 Simon : ROI after image processing is binarization
@@ -154,6 +154,10 @@ Void MyForm::capture_Click(System::Object^  sender, System::EventArgs^  e)
 
 	//將影像顯示在pictureBox
 	UpdateImage();
+
+    //20180316 Simon: Gather information for PNP data
+    if (isRoi)
+        Utility::pnpDataCollect(cData, roiH, roiW);
 
 	free(cData);
 
@@ -278,8 +282,6 @@ Void MyForm::ok_Click(System::Object^  sender, System::EventArgs^  e)
 	Utility::sendRoiInfo(roiX, roiY, roiW, roiH, rNum, gNum, bNum);
 
 	MyForm::capture_Click(sender, e);
-
-    Utility::getSegmentInfo((UCHAR*)pCharInfo);
 }
 
 Void MyForm::roiDigit_Click(System::Object^  sender, System::EventArgs^  e) 
@@ -416,7 +418,8 @@ void MyForm::pictureBox1_MouseUp(Object^ /*sender*/, System::Windows::Forms::Mou
 
 		sprintf(str, "roiX=%d , roiY=%d , roiW=%d , roiH=%d\n", roiX, roiY, roiW, roiH);
 		out_message->Text = gcnew String(str);
-
+        
+        printf("%s", str);
 	}
 	// Draw the rectangle to be evaluated. Set a dashed frame style 
 	// using the FrameStyle enumeration.

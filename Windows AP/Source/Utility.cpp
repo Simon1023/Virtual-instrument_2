@@ -23,6 +23,7 @@ char drive;
 char drivelist[26];
 int drive_count;
 UCHAR databuffer[65536];
+SEG_CHAR_INFO charInfo[16];
 
 Utility::Utility()
 {
@@ -271,7 +272,7 @@ int Utility::getSegmentCount()
 }
 
 //20180220 Simon: Send the command to PVC mini to get the information of segmented characters 
-int Utility::getSegmentInfo(UCHAR *buf)
+void Utility::getSegmentInfo(UCHAR *buf)
 {
     UCHAR scsiCmd[9] = { SCSI_GET_SEGMENT_INFO,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };
     int dataLength;
@@ -281,20 +282,119 @@ int Utility::getSegmentInfo(UCHAR *buf)
     dataLength = getSegmentCount() * sizeof(SEG_CHAR_INFO);
 
     SCSICMD(fileHandle, SCSI_IOCTL_DATA_IN, scsiCmd, dataLength, buf);
+}
+
+//20180316 Simon: Gather information for PNP data
+void Utility::pnpDataCollect(unsigned char *srcImg, int roiH , int roiW)
+{
+    int count = 0;
+    char blockNr, blockNc;
+
+    printf("pnpDataCollect roiH:%d,roiW:%d\n", roiH, roiW);
 
     //test
-    int count = getSegmentCount();
-    SEG_CHAR_INFO *pCharInfo = (SEG_CHAR_INFO *)buf;
-
-    printf("count = %d\n", count);
-
-    for (int i = 0; i < count; i++, pCharInfo++)
+    printf("=============== srcImg  ==================\n");
+    for (int i = 0; i < roiH; i++)
     {
-        printf("[%d] x:%d ,y:%d ,nr:%d ,nc:%d\n", i , pCharInfo->x, pCharInfo->y, pCharInfo->nr, pCharInfo->nc);
+        for (int j = 0; j < roiW; j++)
+        {
+            printf("%4d", srcImg[i*roiW+j]);
+        }
+        printf("\n");
     }
- 
-    return 0;
+    printf("==========================================\n");
+
+
+    Utility::getSegmentInfo((UCHAR*)charInfo);
+
+    count = getSegmentCount();
+
+    for (int i = 0; i < count; i++)
+    {
+        printf("[char %d] x:%d ,y:%d ,nr:%d ,nc:%d\n", i, charInfo[i].x, charInfo[i].y, charInfo[i].nr, charInfo[i].nc);
+
+        //test
+        printf("=============== charImg  ==================\n");
+        int start = charInfo[i].y*roiW + charInfo[i].x;
+        for (int j = 0; j < charInfo[i].nr; j++)
+        {
+            for (int k = 0; k < charInfo[i].nc; k++)
+            {
+                printf("%4d", srcImg[start+j*roiW + k]);
+            }
+            printf("\n");
+        }
+        printf("===========================================\n");
+
+        blockNr = charInfo[i].nr / 3;
+        blockNc = charInfo[i].nc / 3;
+
+        for (int blockIndex = 0; blockIndex < 9; blockIndex++)
+        {
+            int blockStart = charInfo[i].y*roiW + charInfo[i].x;
+            int blackCount = 0;
+            float blackRatio;
+
+            if (blockIndex < 3)
+            {
+                blockStart += blockIndex*blockNc;
+
+                printf("blockIndex[%d] blockIndex*blockNc=%d\n", blockIndex, blockIndex*blockNc);
+
+            }
+            else if (blockIndex < 6)
+            {
+                blockStart += (blockIndex-3)*blockNc + blockNr*roiW;
+
+                printf("blockIndex[%d] blockIndex*blockNc=%d,blockNr*roiW=%d\n", blockIndex, blockIndex*blockNc, blockNr*roiW);
+            }
+            else if (blockIndex < 9)
+            {
+                blockStart += (blockIndex-6)*blockNc + blockNr*roiW * 2;
+
+                printf("blockIndex[%d] blockIndex*blockNc=%d,blockNr*roiW*2=%d\n", blockIndex, blockIndex*blockNc, blockNr*roiW*2);
+            }
+
+            printf("block%d start from %d\n", blockIndex, blockStart);
+
+            for (int j = 0; j < blockNr; j++)
+            {
+                printf("[block %d][%d] ", blockIndex, j);
+
+                for (int k = 0; k < blockNc; k++)
+                {
+                    if (srcImg[blockStart+j*roiW+k] == 0)
+                        blackCount++;
+
+                    //test
+                    printf("%4d", srcImg[blockStart + j*roiW + k]);
+                }
+                printf("\n");
+            }
+
+            blackRatio = (float)blackCount/ (float)(blockNr*blockNc);
+
+            printf("block[%d] blackCount:%d, blackRatio:%f\n\n", blockIndex, blackCount,blackRatio);
+
+        }
+
+        //Draw the boundry for testing
+        /*
+        for (int x = 0; x < roiW; x++)
+        {
+            *(srcImg + charInfo[i].y*roiW + x) = 128;
+            *(srcImg + charInfo[i].y*roiW + x + roiW*charInfo[i].nr) = 128;
+        }
+
+        for (int y = 0; y < roiH; y++)
+        {
+            *(srcImg + charInfo[i].x + y*roiW) = 128;
+            *(srcImg + charInfo[i].x + charInfo[i].nc + y*roiW) = 128;
+        }
+        */
+    }
 }
+
 void Utility::bayer2rgb(unsigned char *pData, unsigned char *cData, int nr, int nc)
 {
 	int i, j;

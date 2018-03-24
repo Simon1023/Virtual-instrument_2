@@ -53,7 +53,6 @@ namespace VirtualInstrument {
 		int roiH;
 		bool isDrag;
 		bool isRoi;
-        void *pCharInfo;
 
 		System::Drawing::Rectangle theRectangle;
 		Point startPoint;
