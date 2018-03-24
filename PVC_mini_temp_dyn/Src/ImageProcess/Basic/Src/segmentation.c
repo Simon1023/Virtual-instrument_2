@@ -84,7 +84,8 @@ int segment(uc1D *imageSrc)
 	gCharCount = index;
 	//pChar = gpProjection ;
 	
-	//test
+	//Draw the boundry for testing
+    /*
 	for(x=0;x<imageSrc->nc;x++)
 		*(imageSrc->m+hMin*imageSrc->nc+x) = 128;
 
@@ -101,7 +102,8 @@ int segment(uc1D *imageSrc)
 			*(imageSrc->m + gpCharInfo[index].x + gpCharInfo[index].nc + y*imageSrc->nc)=128; 
 		}
 	}
-	
+	*/
+    
 	return 0;
 }
 
