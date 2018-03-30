@@ -116,3 +116,49 @@ CHAR_INFO * segmentGetInfo()
 {
     return gpCharInfo;
 }
+
+void segmentGetRatio(void *img,unsigned char charIndex, float* array)
+{
+    char blockCount =9;
+    char blockNr, blockNc;
+    CHAR_INFO *pCharInfo = gpCharInfo+charIndex;
+    int blockIndex;
+    uc1D *srcImg = (uc1D *)img;
+    
+    blockNr = pCharInfo->nr/3;
+    blockNc = pCharInfo->nc/3;
+    
+    for (blockIndex = 0; blockIndex < blockCount; blockIndex++)
+    {
+        int blockStart = pCharInfo->y*srcImg->nc + pCharInfo->x;
+        int blackCount = 0;
+        float blackRatio;
+
+        if (blockIndex < 3)
+        {
+            blockStart += blockIndex*blockNc;
+        }
+        else if (blockIndex < 6)
+        {
+            blockStart += (blockIndex-3)*blockNc + blockNr*srcImg->nc;
+        }
+        else if (blockIndex < 9)
+        {
+            blockStart += (blockIndex-6)*blockNc + blockNr*srcImg->nc*2;
+        }
+
+        for (int j = 0; j < blockNr; j++)
+        {
+            for (int k = 0; k < blockNc; k++)
+            {
+                if (srcImg->m[blockStart+j*srcImg->nc+k] == 0)
+                    blackCount++;
+            }
+        }
+
+        blackRatio = (float)blackCount/ (float)(blockNr*blockNc);
+        
+        array[blockIndex] = blackRatio;
+    }
+      
+}

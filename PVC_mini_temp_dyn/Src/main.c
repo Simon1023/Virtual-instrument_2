@@ -50,6 +50,7 @@ extern sd_uchar OrgImgBuf[];
 extern uint32_t DMA_FRAME_BUFFER;
 extern uint8_t CDC_Transmit_HS(uint8_t* Buf, uint16_t Len);
 extern int8_t CDC_Receive_HS  (uint8_t* pbuf, uint32_t *Len);
+extern void PNN_Initialize();
 
 int SendImage(unsigned char * ImgBuf);
 	
@@ -192,6 +193,9 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	Start=(uint32_t *)Buf;
+    
+    PNN_Initialize();
+    
   while (1)
   {
   /* USER CODE END WHILE */
@@ -221,8 +225,8 @@ int main(void)
 				//CDC
 //			SendImage(Data);
 			
-		}	
-		
+		}
+        
 //		LEDs_TEST();
 //		HAL_Delay(500);		
   }
