@@ -117,20 +117,19 @@ CHAR_INFO * segmentGetInfo()
     return gpCharInfo;
 }
 
-void segmentGetRatio(void *img,unsigned char charIndex, float* array)
+void segmentGetRatio(unsigned char* srcImg,int nc,unsigned char charIndex, float* array)
 {
     char blockCount =9;
     char blockNr, blockNc;
     CHAR_INFO *pCharInfo = gpCharInfo+charIndex;
     int blockIndex;
-    uc1D *srcImg = (uc1D *)img;
     
     blockNr = pCharInfo->nr/3;
     blockNc = pCharInfo->nc/3;
     
     for (blockIndex = 0; blockIndex < blockCount; blockIndex++)
     {
-        int blockStart = pCharInfo->y*srcImg->nc + pCharInfo->x;
+        int blockStart = pCharInfo->y*nc + pCharInfo->x;
         int blackCount = 0;
         float blackRatio;
 
@@ -140,18 +139,18 @@ void segmentGetRatio(void *img,unsigned char charIndex, float* array)
         }
         else if (blockIndex < 6)
         {
-            blockStart += (blockIndex-3)*blockNc + blockNr*srcImg->nc;
+            blockStart += (blockIndex-3)*blockNc + blockNr*nc;
         }
         else if (blockIndex < 9)
         {
-            blockStart += (blockIndex-6)*blockNc + blockNr*srcImg->nc*2;
+            blockStart += (blockIndex-6)*blockNc + blockNr*nc*2;
         }
 
         for (int j = 0; j < blockNr; j++)
         {
             for (int k = 0; k < blockNc; k++)
             {
-                if (srcImg->m[blockStart+j*srcImg->nc+k] == 0)
+                if (srcImg[blockStart+j*nc+k] == 0)
                     blackCount++;
             }
         }

@@ -151,14 +151,13 @@
         </SetRegEntry>
       </TargetDriverDllRegistry>
       <Breakpoint/>
-      <MemoryWindow1>
-        <Mm>
+      <WatchWindow1>
+        <Ww>
+          <count>0</count>
           <WinNumber>1</WinNumber>
-          <SubType>0</SubType>
-          <ItemText>pDst-&gt;m</ItemText>
-          <AccSizeX>0</AccSizeX>
-        </Mm>
-      </MemoryWindow1>
+          <ItemText>result</ItemText>
+        </Ww>
+      </WatchWindow1>
       <MemoryWindow2>
         <Mm>
           <WinNumber>2</WinNumber>
