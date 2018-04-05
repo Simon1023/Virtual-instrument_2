@@ -112,6 +112,15 @@ Void MyForm::capture_Click(System::Object^  sender, System::EventArgs^  e)
     else
         Utility::bayer2rgb(pData, cData, nr, nc);
 	
+    //20180405 Simon: Get the result of PNN
+    if (isRoi)
+    {
+        for(int k=0;k<Utility::getSegmentCount();k++)
+            printf("PNN result[%d] = %d\n",k, cData[nr * nc - 1 - k]);
+    }
+    printf("The time = %fs\n", (double)(end - start) / CLOCKS_PER_SEC);
+
+
 	free(pData);
 
 	end = clock();
