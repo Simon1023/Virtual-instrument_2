@@ -115,9 +115,20 @@ Void MyForm::capture_Click(System::Object^  sender, System::EventArgs^  e)
     //20180405 Simon: Get the result of PNN
     if (isRoi)
     {
-        for(int k=0;k<Utility::getSegmentCount();k++)
-            printf("PNN result[%d] = %d\n",k, cData[nr * nc - 1 - k]);
+        char str[128];
+        int k;
+
+        for (k = 0; k < Utility::getSegmentCount(); k++)
+            printf("PNN result[%d] = %d\n", k, cData[nr * nc - 1 - k]);
+
+        if(k==1)
+            sprintf(str, "PNN result:%d \n", cData[nr * nc - 1]);
+        else if(k==2)
+            sprintf(str, "PNN result:%d ,%d\n", cData[nr * nc - 1], cData[nr * nc - 2]);
+
+        out_message->Text = gcnew String(str);
     }
+ 
     printf("The time = %fs\n", (double)(end - start) / CLOCKS_PER_SEC);
 
 
