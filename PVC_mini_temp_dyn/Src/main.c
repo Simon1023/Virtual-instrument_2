@@ -42,6 +42,7 @@
 #include "Transmission_mode.h"
 #include "binarization.h"
 #include "binaryOpenning.h"
+#include "binaryClosing.h"
 #include "segmentation.h"
 #include "bayer2binary.h"
 
@@ -876,12 +877,13 @@ int imageProcessing(unsigned char *src , unsigned char *dst , int nr , int nc)
 	
     //20180228 Simon: Transfer bayer to RGB and transfer RGB to binary.
     imageBin.m = dst;
-    bayer2binary(&imageSrc,&imageBin,gRoi.r,gRoi.g,gRoi.b);
+    bayer2binary(&imageSrc,&imageDst,gRoi.r,gRoi.g,gRoi.b);
     
 	//2018/01/28 Simon: Openning caculation
-	//binaryOpenning(&imageSrc, &imageDst);
-	binaryDilation(&imageBin, &imageTemp);
-	binaryErosion(&imageTemp, &imageDst);
+	binaryOpenning(&imageSrc, &imageDst);
+    //binaryClosing(&imageSrc, &imageDst);
+    //binaryDilation(&imageBin, &imageTemp);
+    //binaryErosion(&imageTemp, &imageDst);
     
 	free(imageTemp.m);
 
