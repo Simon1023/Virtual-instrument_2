@@ -33,6 +33,7 @@ Void MyForm::MyForm_Load(System::Object^  sender, System::EventArgs^  e)
 	video->Enabled = false;
 	roiDigit->Enabled = false;
 	roiWave->Enabled = false;
+    roiHand->Enabled = false;
 	ok->Enabled = false;
     textBox_R->Enabled = false;
     textBox_G->Enabled = false;
@@ -183,6 +184,7 @@ Void MyForm::capture_Click(System::Object^  sender, System::EventArgs^  e)
 
 	roiDigit->Enabled = true;
 	roiWave->Enabled = true;
+    roiHand->Enabled = true;
 }
 
 void MyForm::ThreadMethod(/*Object^ state*/)
@@ -274,6 +276,7 @@ Void MyForm::ok_Click(System::Object^  sender, System::EventArgs^  e)
 
 	roiDigit->Enabled = false;
 	roiWave->Enabled = false;
+    roiHand->Enabled = false;
 
     if (textBox_R->TextLength == 0 || textBox_G->TextLength == 0 || textBox_B->TextLength == 0)
     {
@@ -307,11 +310,19 @@ Void MyForm::ok_Click(System::Object^  sender, System::EventArgs^  e)
 Void MyForm::roiDigit_Click(System::Object^  sender, System::EventArgs^  e) 
 {
 	roiWave->Enabled = false;
+    roiHand->Enabled = false;
 }
 
 System::Void MyForm::roiWave_Click(System::Object^  sender, System::EventArgs^  e) 
 {
 	roiDigit->Enabled = false;
+    roiHand->Enabled = false;
+}
+
+System::Void MyForm::roiHand_Click(System::Object^  sender, System::EventArgs^  e)
+{
+    roiDigit->Enabled = false;
+    roiWave->Enabled = false;
 }
 
 System::Void MyForm::pictureBox1_Click(System::Object^  sender, System::EventArgs^  e) 
@@ -327,7 +338,7 @@ Void MyForm::panel1_Paint(System::Object^  sender, System::Windows::Forms::Paint
 void MyForm::pictureBox1_MouseDown(Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
 {
 
-	if (roiDigit->Enabled != true && roiWave->Enabled != true)
+	if (roiDigit->Enabled != true && roiWave->Enabled != true && roiHand->Enabled != true)
 		return;
 
 	printf("MouseDown(X:%d,Y:%d)\n",e->X, e->Y);

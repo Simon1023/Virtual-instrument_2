@@ -28,6 +28,7 @@ namespace VirtualInstrument {
 		System::Windows::Forms::Button^  ok;
 		System::Windows::Forms::Button^  roiDigit;
 		System::Windows::Forms::Button^  roiWave;
+        System::Windows::Forms::Button^  roiHand;
 		System::Windows::Forms::Button^  video;
 		System::Windows::Forms::Panel^  panel1;
 		System::Windows::Forms::PictureBox^  pictureBox1;
@@ -76,6 +77,7 @@ namespace VirtualInstrument {
 			this->ok = (gcnew System::Windows::Forms::Button());
 			this->roiDigit = (gcnew System::Windows::Forms::Button());
 			this->roiWave = (gcnew System::Windows::Forms::Button());
+            this->roiHand = (gcnew System::Windows::Forms::Button());
             this->textBox_R = (gcnew System::Windows::Forms::TextBox());
             this->textBox_G = (gcnew System::Windows::Forms::TextBox());
             this->textBox_B = (gcnew System::Windows::Forms::TextBox());
@@ -86,9 +88,9 @@ namespace VirtualInstrument {
 			// 
 			// connect
 			// 
-			this->connect->Location = System::Drawing::Point(13, 522);
+			this->connect->Location = System::Drawing::Point(10, 522);
 			this->connect->Name = L"connect";
-			this->connect->Size = System::Drawing::Size(75, 23);
+			this->connect->Size = System::Drawing::Size(65, 23);
 			this->connect->TabIndex = 0;
 			this->connect->Text = L"connect";
 			this->connect->UseVisualStyleBackColor = true;
@@ -96,9 +98,9 @@ namespace VirtualInstrument {
 			// 
 			// capture
 			// 
-			this->capture->Location = System::Drawing::Point(107, 522);
+			this->capture->Location = System::Drawing::Point(80, 522);
 			this->capture->Name = L"capture";
-			this->capture->Size = System::Drawing::Size(75, 23);
+			this->capture->Size = System::Drawing::Size(65, 23);
 			this->capture->TabIndex = 1;
 			this->capture->Text = L"capture";
 			this->capture->UseVisualStyleBackColor = true;
@@ -106,9 +108,9 @@ namespace VirtualInstrument {
 			// 
 			// video
 			// 
-			this->video->Location = System::Drawing::Point(465, 522);
+			this->video->Location = System::Drawing::Point(430, 522);
 			this->video->Name = L"video";
-			this->video->Size = System::Drawing::Size(75, 23);
+			this->video->Size = System::Drawing::Size(65, 23);
 			this->video->TabIndex = 2;
 			this->video->Text = L"video";
 			this->video->UseVisualStyleBackColor = true;
@@ -148,9 +150,9 @@ namespace VirtualInstrument {
 			// 
 			// ok
 			// 
-			this->ok->Location = System::Drawing::Point(379, 522);
+			this->ok->Location = System::Drawing::Point(360, 522);
 			this->ok->Name = L"ok";
-			this->ok->Size = System::Drawing::Size(75, 23);
+			this->ok->Size = System::Drawing::Size(65, 23);
 			this->ok->TabIndex = 5;
 			this->ok->Text = L"OK";
 			this->ok->UseVisualStyleBackColor = true;
@@ -158,9 +160,9 @@ namespace VirtualInstrument {
 			// 
 			// roiDigit
 			// 
-			this->roiDigit->Location = System::Drawing::Point(199, 522);
+			this->roiDigit->Location = System::Drawing::Point(150, 522);
 			this->roiDigit->Name = L"roiDigit";
-			this->roiDigit->Size = System::Drawing::Size(75, 23);
+			this->roiDigit->Size = System::Drawing::Size(65, 23);
 			this->roiDigit->TabIndex = 6;
 			this->roiDigit->Text = L"ROI(digit)";
 			this->roiDigit->UseVisualStyleBackColor = true;
@@ -168,34 +170,44 @@ namespace VirtualInstrument {
 			// 
 			// roiWave
 			// 
-			this->roiWave->Location = System::Drawing::Point(289, 522);
+			this->roiWave->Location = System::Drawing::Point(220, 522);
 			this->roiWave->Name = L"roiWave";
-			this->roiWave->Size = System::Drawing::Size(75, 23);
+			this->roiWave->Size = System::Drawing::Size(65, 23);
 			this->roiWave->TabIndex = 7;
 			this->roiWave->Text = L"ROI(wave)";
 			this->roiWave->UseVisualStyleBackColor = true;
 			this->roiWave->Click += gcnew System::EventHandler(this, &MyForm::roiWave_Click);
+            // 
+            // roiHand
+            // 
+            this->roiHand->Location = System::Drawing::Point(290, 522);
+            this->roiHand->Name = L"roiHand";
+            this->roiHand->Size = System::Drawing::Size(65, 23);
+            this->roiHand->TabIndex = 8;
+            this->roiHand->Text = L"ROI(hand)";
+            this->roiHand->UseVisualStyleBackColor = true;
+            this->roiHand->Click += gcnew System::EventHandler(this, &MyForm::roiHand_Click);
             // 
             // textBox_R
             // 
             this->textBox_R->Location = System::Drawing::Point(570, 534);
             this->textBox_R->Name = L"textBox_RGB";
             this->textBox_R->Size = System::Drawing::Size(25, 22);
-            this->textBox_R->TabIndex = 8;
+            this->textBox_R->TabIndex = 9;
             // 
             // textBox_G
             // 
             this->textBox_G->Location = System::Drawing::Point(595, 534);
             this->textBox_G->Name = L"textBox_G";
             this->textBox_G->Size = System::Drawing::Size(25, 22);
-            this->textBox_G->TabIndex = 9;
+            this->textBox_G->TabIndex = 10;
             // 
             // textBox_B
             // 
             this->textBox_B->Location = System::Drawing::Point(620, 534);
             this->textBox_B->Name = L"textBox_B";
             this->textBox_B->Size = System::Drawing::Size(25, 22);
-            this->textBox_B->TabIndex = 10;
+            this->textBox_B->TabIndex = 11;
             // 
             // label_RGB
             // 
@@ -203,7 +215,7 @@ namespace VirtualInstrument {
             this->label_RGB->Location = System::Drawing::Point(550, 522);
             this->label_RGB->Name = L"label_RGB";
             this->label_RGB->Size = System::Drawing::Size(54, 12);
-            this->label_RGB->TabIndex = 11;
+            this->label_RGB->TabIndex = 12;
             this->label_RGB->Text = L"Filter R     G     B";
             // 
 			// MyForm
@@ -219,6 +231,7 @@ namespace VirtualInstrument {
 			this->Controls->Add(this->ok);
 			this->Controls->Add(this->roiDigit);
 			this->Controls->Add(this->roiWave);
+            this->Controls->Add(this->roiHand);
             this->Controls->Add(this->label_RGB);
             this->Controls->Add(this->textBox_R);
             this->Controls->Add(this->textBox_G);
@@ -241,6 +254,7 @@ namespace VirtualInstrument {
 		System::Void ok_Click(System::Object^  sender, System::EventArgs^  e);
 		System::Void roiDigit_Click(System::Object^  sender, System::EventArgs^  e);
 		System::Void roiWave_Click(System::Object^  sender, System::EventArgs^  e);
+        System::Void roiHand_Click(System::Object^  sender, System::EventArgs^  e);
 		System::Void pictureBox1_Click(System::Object^  sender, System::EventArgs^  e);
 		System::Void panel1_Paint(System::Object^  sender, System::Windows::Forms::PaintEventArgs^  e);
 		void pictureBox1_MouseDown(Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
