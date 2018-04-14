@@ -82,14 +82,17 @@
 #define SCSI_SEND_DIAGNOSTIC                        0x1D
 #define SCSI_READ_FORMAT_CAPACITIES                 0x23
 
-#define SCSI_GET_IMAGE_INFO													0xD0
-#define SCSI_CHECK_IMAGE_READY											0xD1
-#define SCSI_GET_IMAGE															0xD2
-#define SCSI_CLEAR_FLAG															0xD3
-#define SCSI_SEND_ROI_INFO													0xD4
-#define SCSI_GET_ROI_IMAGE													0xD5
-#define SCSI_GET_SEGMENT_COUNT											0xD6
-#define SCSI_GET_SEGMENT_INFO												0xD7
+#define SCSI_GET_IMAGE_INFO             0xD0
+#define SCSI_CHECK_IMAGE_READY          0xD1
+#define SCSI_GET_IMAGE                  0xD2
+#define SCSI_CLEAR_FLAG                 0xD3
+#define SCSI_SEND_ROI_INFO              0xD4
+#define SCSI_GET_ROI_IMAGE              0xD5
+#define SCSI_GET_SEGMENT_COUNT          0xD6
+#define SCSI_GET_SEGMENT_INFO           0xD7
+#define SCSI_SEND_ROI_DIGIT_INFO        0xD8
+#define SCSI_SEND_ROI_WAVE_INFO         0xD9
+#define SCSI_SEND_ROI_HAND_INFO         0xDA
 
 #define NO_SENSE                                    0
 #define RECOVERED_ERROR                             1

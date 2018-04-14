@@ -43,15 +43,7 @@ extern volatile uint8_t isRead;
 extern sd_uchar pData[NUM_OF_PIXELS];
 extern sd_uchar dstBuf[NUM_OF_PIXELS];
 
-extern struct ROI {
-	int x;
-	int y;
-	int w;
-	int h;
-    unsigned char r;
-    unsigned char g;
-    unsigned char b;
-} gRoi;
+extern ROI gRoi;
 
 uint8_t *pCurCmd =NULL;
 
@@ -220,6 +212,9 @@ int8_t SCSI_ProcessCmd(USBD_HandleTypeDef  *pdev,
 
 	//20180109 Simon Windows AP sends the information to PVC mini 
 	case SCSI_SEND_ROI_INFO:
+    case SCSI_SEND_ROI_DIGIT_INFO:
+    case SCSI_SEND_ROI_WAVE_INFO:
+    case SCSI_SEND_ROI_HAND_INFO:
 		return MSC_GetRoiInfo(pdev, lun, params);
 
 	//20180116 Simon: Windows AP gets the image of ROI from PVC mini 
@@ -302,9 +297,22 @@ static int8_t MSC_GetRoiInfo (USBD_HandleTypeDef  *pdev, uint8_t lun, uint8_t *p
 		gRoi.w = params[5]| params[6] << 8;
 		gRoi.h = params[7]| params[8] << 8;
         
-        gRoi.r = params[9];
-        gRoi.g = params[10];
-        gRoi.b = params[11];
+        //20180414 Simon: Check the type of ROI by SCSI command
+        if(params[0] == SCSI_SEND_ROI_DIGIT_INFO)
+        {
+            gRoi.type = ROI_TYPE_DIGIT;
+            gRoi.r = params[9];
+            gRoi.g = params[10];
+            gRoi.b = params[11];
+        }
+        else if(params[0] == SCSI_SEND_ROI_WAVE_INFO)
+        {
+            gRoi.type = ROI_TYPE_WAVE;   
+        }
+        else if(params[0] == SCSI_SEND_ROI_HAND_INFO)
+        {
+            gRoi.type = ROI_TYPE_HAND;   
+        }
   }
 	
 	hmsc->bot_data_length = 0;

@@ -82,15 +82,7 @@ UART_HandleTypeDef huart2;
 
 SDRAM_HandleTypeDef hsdram1;
 
-struct ROI {
-	int x;
-	int y;
-	int w;
-	int h;
-    unsigned char r;
-    unsigned char g;
-    unsigned char b;
-} gRoi;
+ROI gRoi;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -871,6 +863,25 @@ int imageProcessing(unsigned char *src , unsigned char *dst , int nr , int nc)
 	imageSrc.m = src;
 	imageDst.m = dst;
 	imageTemp.m = (unsigned char*)calloc(nr*nc,sizeof(unsigned char));
+    
+    //20180414 Simon: test
+    /*
+    if(gRoi.type == ROI_TYPE_WAVE || gRoi.type == ROI_TYPE_HAND)
+    {
+        unsigned char *pin = imageSrc.m;
+        unsigned char *pout = imageDst.m;
+        
+        for(int i=0;i<imageSrc.nr;i++)
+            for(int j=0;j<imageSrc.nc;j++)
+            {
+                *pout = *pin;
+                pin++;
+                pout++;
+            }
+        
+        return 0;
+    }
+    */
     
 	//2018/01/28 Simon: binaryErosion includes binarization
 	//binarization(&imageSrc, &imageBin, 128);
