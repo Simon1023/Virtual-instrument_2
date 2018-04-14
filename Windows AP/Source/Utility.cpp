@@ -24,6 +24,7 @@ char drivelist[26];
 int drive_count;
 UCHAR databuffer[65536];
 SEG_CHAR_INFO charInfo[16];
+int roiType = ROI_TYPE_NONE;
 
 Utility::Utility()
 {
@@ -239,7 +240,6 @@ int Utility::sendRoiInfo(USHORT x, USHORT y, USHORT w, USHORT h, UCHAR r, UCHAR 
 
 	printf("[sendRoiInfo] x:0x%x, y:0x%x, w:0x%x, h:0x%x\n",x,y,w,h);
 
-	command[0] = SCSI_SEND_ROI_INFO;
 	command[1] = x & 0xFF;
 	command[2] = x >> 8 & 0xFF;
 	command[3] = y & 0xFF;
@@ -248,9 +248,24 @@ int Utility::sendRoiInfo(USHORT x, USHORT y, USHORT w, USHORT h, UCHAR r, UCHAR 
 	command[6] = w >> 8 & 0xFF;
 	command[7] = h & 0xFF;
 	command[8] = h >> 8 & 0xFF;
-    command[9] = r;
-    command[10] = g;
-    command[11] = b;
+
+    //20180414 Simon: Issue SCSI commands by ROI types
+    if (roiType == ROI_TYPE_DIGIT)
+    {
+        command[0] = SCSI_SEND_ROI_DIGIT_INFO;
+
+        command[9] = r;
+        command[10] = g;
+        command[11] = b;
+    }
+    else if (roiType == ROI_TYPE_WAVE)
+    {
+        command[0] = SCSI_SEND_ROI_WAVE_INFO;
+    }
+    else if (roiType == ROI_TYPE_HAND)
+    {
+        command[0] = SCSI_SEND_ROI_HAND_INFO;
+    }
 
 	status = SCSICMD(fileHandle, SCSI_IOCTL_DATA_OUT, command, datalength, databuffer);
 

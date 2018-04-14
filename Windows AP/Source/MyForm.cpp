@@ -12,6 +12,8 @@ using namespace System::Drawing;
 using namespace System::Threading;
 using namespace VirtualInstrument;
 
+extern int roiType;
+
 MyForm::MyForm()
 {
 	InitializeComponent();
@@ -272,34 +274,42 @@ Void MyForm::video_Click(System::Object^  sender, System::EventArgs^  e) {
 
 Void MyForm::ok_Click(System::Object^  sender, System::EventArgs^  e) 
 {
+    int rNum = 0, gNum = 0, bNum=0;
+
 	printf("[ok_Click]\n");
 
 	roiDigit->Enabled = false;
 	roiWave->Enabled = false;
     roiHand->Enabled = false;
 
-    if (textBox_R->TextLength == 0 || textBox_G->TextLength == 0 || textBox_B->TextLength == 0)
+    //20180414 Simon: Only digit neeeds to filter RGB
+    if (roiType == ROI_TYPE_DIGIT)
     {
-        out_message->Text = "Error: The value within RGB filter must be 0~255\n";
+        if (textBox_R->TextLength == 0 || textBox_G->TextLength == 0 || textBox_B->TextLength == 0)
+        {
+            out_message->Text = "Error: The value within RGB filter must be 0~255\n";
 
-        return;
+            return;
+        }
+
+        rNum = Convert::ToInt32(textBox_R->Text);
+        gNum = Convert::ToInt32(textBox_G->Text);
+        bNum = Convert::ToInt32(textBox_B->Text);
+
+        if (rNum < 0 || rNum>255 || gNum < 0 || gNum>255 || bNum < 0 || bNum>255)
+        {
+            out_message->Text = "Error: The value within RGB filter must be 0~255\n";
+
+            return;
+        }
+        else
+        {
+            out_message->Text = "";
+            printf("RGB filter: %d,%d,%d\n", rNum, gNum, bNum);
+        }
     }
 
-    int rNum = Convert::ToInt32(textBox_R->Text);
-    int gNum = Convert::ToInt32(textBox_G->Text);
-    int bNum = Convert::ToInt32(textBox_B->Text);
 
-    if (rNum < 0 || rNum>255 || gNum < 0 || gNum>255 || bNum < 0 || bNum>255)
-    {
-        out_message->Text = "Error: The value within RGB filter must be 0~255\n";
-
-        return;
-    }
-    else
-    {
-        out_message->Text = "";
-        printf("RGB filter: %d,%d,%d\n",rNum,gNum,bNum);
-    }
     isRoi = true;
 
 	Utility::sendRoiInfo(roiX, roiY, roiW, roiH, rNum, gNum, bNum);
@@ -311,18 +321,24 @@ Void MyForm::roiDigit_Click(System::Object^  sender, System::EventArgs^  e)
 {
 	roiWave->Enabled = false;
     roiHand->Enabled = false;
+
+    roiType = ROI_TYPE_DIGIT;
 }
 
 System::Void MyForm::roiWave_Click(System::Object^  sender, System::EventArgs^  e) 
 {
 	roiDigit->Enabled = false;
     roiHand->Enabled = false;
+
+    roiType = ROI_TYPE_WAVE;
 }
 
 System::Void MyForm::roiHand_Click(System::Object^  sender, System::EventArgs^  e)
 {
     roiDigit->Enabled = false;
     roiWave->Enabled = false;
+
+    roiType = ROI_TYPE_HAND;
 }
 
 System::Void MyForm::pictureBox1_Click(System::Object^  sender, System::EventArgs^  e) 
