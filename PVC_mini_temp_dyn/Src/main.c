@@ -883,23 +883,26 @@ int imageProcessing(unsigned char *src , unsigned char *dst , int nr , int nc)
     }
     */
     
-	//2018/01/28 Simon: binaryErosion includes binarization
-	//binarization(&imageSrc, &imageBin, 128);
+    if(gRoi.type == ROI_TYPE_DIGIT)
+    {
+        //2018/01/28 Simon: binaryErosion includes binarization
+        //binarization(&imageSrc, &imageBin, 128);
 	
-    //20180228 Simon: Transfer bayer to RGB and transfer RGB to binary.
-    imageBin.m = dst;
-    bayer2binary(&imageSrc,&imageDst,gRoi.r,gRoi.g,gRoi.b);
+        //20180228 Simon: Transfer bayer to RGB and transfer RGB to binary.
+        imageBin.m = dst;
+        bayer2binary(&imageSrc,&imageBin,gRoi.r,gRoi.g,gRoi.b);
     
-	//2018/01/28 Simon: Openning caculation
-	binaryOpenning(&imageSrc, &imageDst);
-    //binaryClosing(&imageSrc, &imageDst);
-    //binaryDilation(&imageBin, &imageTemp);
-    //binaryErosion(&imageTemp, &imageDst);
-    
+        //2018/01/28 Simon: Openning caculation
+        //binaryOpenning(&imageTemp, &imageDst);
+        //binaryClosing(&imageSrc, &imageDst);
+        binaryDilation(&imageBin, &imageTemp);
+        binaryErosion(&imageTemp, &imageDst);
+        
+        if(segment(&imageDst) != 0)
+            return 1;
+    }
+        
 	free(imageTemp.m);
-
-    if(segment(&imageDst) != 0)
-        return 1;
 	
 	return 0;
 }
