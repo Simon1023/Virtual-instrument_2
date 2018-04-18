@@ -179,7 +179,7 @@ Void MyForm::capture_Click(System::Object^  sender, System::EventArgs^  e)
 	UpdateImage();
 
     //20180316 Simon: Gather information for PNP data
-    if (isRoi)
+    if (isRoi && roiType == ROI_TYPE_DIGIT)
         Utility::pnpDataCollect(cData, roiH, roiW);
 
 	free(cData);
