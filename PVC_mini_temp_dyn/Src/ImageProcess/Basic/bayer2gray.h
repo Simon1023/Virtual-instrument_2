@@ -1,6 +1,6 @@
 //Basic -- Tranform bayer to gray.
-#ifndef _BAYER2BINARY_H
-#define _BAYER2BINARY_H
+#ifndef _BAYER2GRAY_H
+#define _BAYER2GRAY_H
 
 #include "../../array_2d.h"
 
