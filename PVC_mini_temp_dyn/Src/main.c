@@ -45,6 +45,8 @@
 #include "binaryClosing.h"
 #include "segmentation.h"
 #include "bayer2binary.h"
+#include "bayer2gray.h"
+#include "amf.h"
 
 /* USER CODE BEGIN Includes */
 extern sd_uchar OrgImgBuf[];
@@ -89,7 +91,7 @@ ROI gRoi;
 
 sd_uchar pData[NUM_OF_PIXELS] = {0};
 sd_uchar dstBuf[NUM_OF_PIXELS] = {0};
-
+sd_uchar roiBuf[NUM_OF_PIXELS] = {0};
 
 volatile uint8_t isReady = 0;
 volatile uint8_t isRead = 1;
@@ -862,7 +864,10 @@ int imageProcessing(unsigned char *src , unsigned char *dst , int nr , int nc)
 	imageSrc.nc = imageDst.nc = imageTemp.nc = imageBin.nc = nc;
 	imageSrc.m = src;
 	imageDst.m = dst;
-	imageTemp.m = (unsigned char*)calloc(nr*nc,sizeof(unsigned char));
+	imageTemp.m = pData;
+    
+    //if(!imageTemp.m)
+    //    return 1;
     
     //20180414 Simon: test
     /*
@@ -879,6 +884,7 @@ int imageProcessing(unsigned char *src , unsigned char *dst , int nr , int nc)
                 pout++;
             }
         
+
         return 0;
     }
     */
@@ -901,8 +907,13 @@ int imageProcessing(unsigned char *src , unsigned char *dst , int nr , int nc)
         if(segment(&imageDst) != 0)
             return 1;
     }
+    else if(gRoi.type == ROI_TYPE_HAND)
+    {
+        bayer2gray(&imageSrc, &imageDst);
+        doAmf(&imageDst);
+    }
         
-	free(imageTemp.m);
+	//free(imageTemp.m);
 	
 	return 0;
 }

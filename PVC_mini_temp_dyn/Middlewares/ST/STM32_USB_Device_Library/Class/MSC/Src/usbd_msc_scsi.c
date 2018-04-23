@@ -42,6 +42,7 @@ extern volatile uint8_t isRead;
 //extern uint8_t pData[NR][NC];
 extern sd_uchar pData[NUM_OF_PIXELS];
 extern sd_uchar dstBuf[NUM_OF_PIXELS];
+extern sd_uchar roiBuf[NUM_OF_PIXELS];
 
 extern ROI gRoi;
 
@@ -221,7 +222,8 @@ int8_t SCSI_ProcessCmd(USBD_HandleTypeDef  *pdev,
 	case SCSI_GET_ROI_IMAGE:
 	{
 		char* pSrc = (char*)pData+NC*gRoi.y+gRoi.x;
-		char* pDest = (char*)pData;
+		char* pDest = (char*)roiBuf;
+         
 		int i;
         
 		for(i=0;i<gRoi.h;i++)
@@ -237,8 +239,8 @@ int8_t SCSI_ProcessCmd(USBD_HandleTypeDef  *pdev,
 		}
 
 		//2018/01/27 Simon :Image Processing
-		imageProcessing(pData , dstBuf , gRoi.h , gRoi.w);
-
+		imageProcessing(roiBuf , dstBuf , gRoi.h , gRoi.w);
+               
 		return MSC_BufferRead(pdev, lun, params);
 	}
 	
