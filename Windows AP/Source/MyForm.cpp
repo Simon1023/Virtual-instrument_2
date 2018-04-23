@@ -116,7 +116,7 @@ Void MyForm::capture_Click(System::Object^  sender, System::EventArgs^  e)
         Utility::bayer2rgb(pData, cData, nr, nc);
 	
     //20180405 Simon: Get the result of PNN
-    if (isRoi)
+    if (isRoi && roiType == ROI_TYPE_DIGIT)
     {
         char str[128];
         int k;
