@@ -686,9 +686,13 @@ static int8_t SCSI_BufferRead (USBD_HandleTypeDef  *pdev, uint8_t lun)
   
   if (hmsc->scsi_blk_len == 0)
   {
-    hmsc->bot_state = USBD_BOT_LAST_DATA_IN;
-      
-    gTransfering=0;
+    hmsc->bot_state = USBD_BOT_LAST_DATA_IN;      
+  }
+  
+  //20180425 Simon: Check the last data to transfer
+  if(hmsc->bot_state == USBD_BOT_LAST_DATA_IN)
+  {
+    gTransfering=0;   
   }
   else
   {
