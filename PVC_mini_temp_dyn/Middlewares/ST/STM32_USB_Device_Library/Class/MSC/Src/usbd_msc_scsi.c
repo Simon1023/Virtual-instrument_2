@@ -48,6 +48,10 @@ extern ROI gRoi;
 
 uint8_t *pCurCmd =NULL;
 
+//20180425 Simon: This flag is to avoid executing image processing more than one time.
+//                Because it only transfers 512 bytes at least each time. 
+static uint8_t gTransfering=0;
+    
 int imageProcessing(unsigned char *src , unsigned char *dst , int nr , int nc);
 int PNN_Calculate(unsigned char* img,int nc,unsigned char index);
 
@@ -239,8 +243,9 @@ int8_t SCSI_ProcessCmd(USBD_HandleTypeDef  *pdev,
 		}
 
 		//2018/01/27 Simon :Image Processing
-		imageProcessing(roiBuf , dstBuf , gRoi.h , gRoi.w);
-               
+        if(gTransfering==0)
+            imageProcessing(roiBuf , dstBuf , gRoi.h , gRoi.w);
+        
 		return MSC_BufferRead(pdev, lun, params);
 	}
 	
@@ -646,10 +651,6 @@ static int8_t SCSI_BufferRead (USBD_HandleTypeDef  *pdev, uint8_t lun)
 		
 		//2018/01/27 Simon :Image Processing
 		image_data = dstBuf;
-        
-        //20180405 Simon: Inssert the result of PNN in image data
-        for(int i=0; i<segmentGetCount(); i++)
-            dstBuf[imageSize-1-i]=PNN_Calculate(dstBuf,gRoi.w,i);
 	}
 	else
 		imageSize = NUM_OF_PIXELS;
@@ -686,7 +687,24 @@ static int8_t SCSI_BufferRead (USBD_HandleTypeDef  *pdev, uint8_t lun)
   if (hmsc->scsi_blk_len == 0)
   {
     hmsc->bot_state = USBD_BOT_LAST_DATA_IN;
+      
+    gTransfering=0;
   }
+  else
+  {
+    gTransfering=1;
+
+    if(pCurCmd[0] == SCSI_GET_ROI_IMAGE)
+    {
+        //20180405 Simon: Inssert the result of PNN in image data
+        if(gRoi.type == ROI_TYPE_DIGIT)
+        {
+            for(int i=0; i<segmentGetCount(); i++)
+                dstBuf[imageSize-1-i]=PNN_Calculate(dstBuf,gRoi.w,i);
+        }
+    }
+  }
+  
   return 0;
 }
 
