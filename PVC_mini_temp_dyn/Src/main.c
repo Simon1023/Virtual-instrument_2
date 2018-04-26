@@ -92,6 +92,7 @@ ROI gRoi;
 sd_uchar pData[NUM_OF_PIXELS] = {0};
 sd_uchar dstBuf[NUM_OF_PIXELS] = {0};
 sd_uchar roiBuf[NUM_OF_PIXELS] = {0};
+sd_uchar amfBuf[NUM_OF_PIXELS] = {0};
 
 volatile uint8_t isReady = 0;
 volatile uint8_t isRead = 1;
