@@ -63,7 +63,7 @@ int doAmf(uc1D *pSrc)
         for(int i=0;i<gPixelCount;i++)
             gBasic.m[i] = pSrc->m[i];
             
-        return AMF_RESULT_OK;
+        return AMF_RESULT_INIT;
     }
     else
     {
