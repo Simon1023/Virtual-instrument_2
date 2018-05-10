@@ -54,6 +54,7 @@ extern uint32_t DMA_FRAME_BUFFER;
 extern uint8_t CDC_Transmit_HS(uint8_t* Buf, uint16_t Len);
 extern int8_t CDC_Receive_HS  (uint8_t* pbuf, uint32_t *Len);
 extern void PNN_Initialize();
+extern int houghLineDetect(void *pSrc);
 
 int SendImage(unsigned char * ImgBuf);
 	
@@ -93,6 +94,7 @@ sd_uchar pData[NUM_OF_PIXELS] = {0};
 sd_uchar dstBuf[NUM_OF_PIXELS] = {0};
 sd_uchar roiBuf[NUM_OF_PIXELS] = {0};
 sd_uchar amfBuf[NUM_OF_PIXELS] = {0};
+sd_uchar tempBuf[144000] = {0};
 
 volatile uint8_t isReady = 0;
 volatile uint8_t isRead = 1;
@@ -911,7 +913,10 @@ int imageProcessing(unsigned char *src , unsigned char *dst , int nr , int nc)
     else if(gRoi.type == ROI_TYPE_HAND)
     {
         bayer2gray(&imageSrc, &imageDst);
-        doAmf(&imageDst);
+        if(doAmf(&imageDst)==AMF_RESULT_OK)
+        {  
+            houghLineDetect(&imageDst);
+        }
     }
         
 	//free(imageTemp.m);

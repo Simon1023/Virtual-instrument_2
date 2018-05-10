@@ -1158,6 +1158,16 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>Hough</GroupName>
+          <Files>
+            <File>
+              <FileName>HoughLine.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\ImageProcess\Hough\HoughLine.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>::CMSIS</GroupName>
         </Group>
       </Groups>
