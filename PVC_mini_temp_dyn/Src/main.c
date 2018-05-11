@@ -86,6 +86,7 @@ UART_HandleTypeDef huart2;
 SDRAM_HandleTypeDef hsdram1;
 
 ROI gRoi;
+int gRoiHandvalue =-1;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -915,7 +916,7 @@ int imageProcessing(unsigned char *src , unsigned char *dst , int nr , int nc)
         bayer2gray(&imageSrc, &imageDst);
         if(doAmf(&imageDst)==AMF_RESULT_OK)
         {  
-            houghLineDetect(&imageDst);
+            gRoiHandvalue = houghLineDetect(&imageDst);
         }
     }
         

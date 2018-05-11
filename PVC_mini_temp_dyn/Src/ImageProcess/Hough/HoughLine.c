@@ -6,6 +6,8 @@
 #define FEATURE_POINT 255
 #define BACKGROUND 0
 #define R_MAX 400		
+#define ANGLE_0 45 
+#define ANGLE_100 315
 
 typedef struct Array2D
 {
@@ -30,6 +32,7 @@ typedef struct _MAX{
 static float rmax=0;
 static MAX maxPoint={0};
 static float sinTable[MAX_ANGLE],cosTable[MAX_ANGLE];
+static float scale = (ANGLE_100-ANGLE_0)/(float)100;
 
 //unsigned char buffer[2*R_MAX*MAX_ANGLE] = {0};
 extern sd_uchar tempBuf[144000]; 
@@ -93,7 +96,7 @@ static void transform(uc1D* im, uc2D* hough_ima)
 
 int houghLineDetect(uc1D *pSrc)
 {		
-	int i,j;
+	int i,j,value;
 	uc2D hough={0};
     
     rmax=sqrt((float)pSrc->nr*(float)pSrc->nr+(float)pSrc->nc*(float)pSrc->nc);
@@ -116,6 +119,8 @@ int houghLineDetect(uc1D *pSrc)
     tableInit();
 	transform(pSrc, &hough);	
 
-	return maxPoint.angle;
+	value = (int)((maxPoint.angle-ANGLE_0)/scale+0.5);
+    
+    return value;
 }
 
