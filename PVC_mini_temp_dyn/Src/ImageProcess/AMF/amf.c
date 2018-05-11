@@ -2,7 +2,7 @@
 #include "def_type.h"
 #include "Transmission_mode.h"
 
-#define THRESHOLD 100
+#define THRESHOLD 150
 
 #define TRUE 1
 #define FALSE 0
