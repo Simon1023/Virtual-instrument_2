@@ -125,13 +125,20 @@ Void MyForm::capture_Click(System::Object^  sender, System::EventArgs^  e)
             printf("PNN result[%d] = %d\n", k, cData[nr * nc - 1 - k]);
 
         if(k==1)
-            sprintf(str, "PNN result:%d \n", cData[nr * nc - 1]);
+            sprintf(str, "[Digit] result:%d \n", cData[nr * nc - 1]);
         else if(k==2)
-            sprintf(str, "PNN result:%d ,%d\n", cData[nr * nc - 1], cData[nr * nc - 2]);
+            sprintf(str, "[Digit] result:%d ,%d\n", cData[nr * nc - 1], cData[nr * nc - 2]);
 
         out_message->Text = gcnew String(str);
     }
- 
+    else if (isRoi && roiType == ROI_TYPE_HAND)
+    {
+        char str[128];
+        sprintf(str, "[Hand] result:%d \n", cData[nr * nc - 1]);
+
+        out_message->Text = gcnew String(str);
+    }
+
     printf("The time = %fs\n", (double)(end - start) / CLOCKS_PER_SEC);
 
 
@@ -181,6 +188,27 @@ Void MyForm::capture_Click(System::Object^  sender, System::EventArgs^  e)
     //20180316 Simon: Gather information for PNP data
     if (isRoi && roiType == ROI_TYPE_DIGIT)
         Utility::pnpDataCollect(cData, roiH, roiW);
+
+    //test
+ /*
+    if (isRoi)
+    {
+        printf("============================================================\n");
+        printf("nr=%d,nc=%d\n",nr,nc);
+
+        unsigned char * p = cData;
+        for (int i = 0; i < nr; i++)
+        {
+            for (int j = 0; j < nc; j++)
+            {
+                printf("%d ",*p);
+                p++;
+            }
+            printf("\n");
+        }
+        printf("============================================================\n");
+    }
+*/
 
 	free(cData);
 
