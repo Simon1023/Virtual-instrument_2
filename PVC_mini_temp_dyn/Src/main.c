@@ -55,6 +55,7 @@ extern uint8_t CDC_Transmit_HS(uint8_t* Buf, uint16_t Len);
 extern int8_t CDC_Receive_HS  (uint8_t* pbuf, uint32_t *Len);
 extern void PNN_Initialize();
 extern int houghLineDetect(void *pSrc);
+extern void grayDilation(uc1D *ImaSrc, uc1D *ImaDst);
 
 int SendImage(unsigned char * ImgBuf);
 	
@@ -913,7 +914,19 @@ int imageProcessing(unsigned char *src , unsigned char *dst , int nr , int nc)
     }
     else if(gRoi.type == ROI_TYPE_HAND)
     {
+    #if 0
+        uc1D imageTemp;
+        imageTemp.nr = nr;
+        imageTemp.nc = nc;
+        imageTemp.m = pData;
+        
+
+        bayer2gray(&imageSrc, &imageTemp);
+        
+        grayDilation(&imageTemp, &imageDst);
+    #else
         bayer2gray(&imageSrc, &imageDst);
+    #endif
         if(doAmf(&imageDst)==AMF_RESULT_OK)
         {  
             gRoiHandvalue = houghLineDetect(&imageDst);
