@@ -131,6 +131,13 @@ Void MyForm::capture_Click(System::Object^  sender, System::EventArgs^  e)
 
         out_message->Text = gcnew String(str);
     }
+    else if (isRoi && roiType == ROI_TYPE_WAVE)
+    {
+        char str[128];
+        sprintf(str, "[Wave] result:%d \n", cData[nr * nc - 1]);
+
+        out_message->Text = gcnew String(str);
+    }
     else if (isRoi && roiType == ROI_TYPE_HAND)
     {
         char str[128];
