@@ -88,6 +88,7 @@ SDRAM_HandleTypeDef hsdram1;
 
 ROI gRoi;
 int gRoiHandvalue =-1;
+int gRoiWaveValue = 0;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -911,6 +912,14 @@ int imageProcessing(unsigned char *src , unsigned char *dst , int nr , int nc)
         
         if(segment(&imageDst) != 0)
             return 1;
+    }
+    else if(gRoi.type == ROI_TYPE_WAVE)
+    {
+        bayer2gray(&imageSrc, &imageDst);
+        if(doAmf(&imageDst)==AMF_RESULT_OK)
+        {  
+            gRoiWaveValue = getWaveValue(&imageDst);
+        }
     }
     else if(gRoi.type == ROI_TYPE_HAND)
     {

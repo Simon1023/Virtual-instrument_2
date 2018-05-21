@@ -10,4 +10,6 @@
 int doAmf(uc1D *pSrc);
 void resetAmf();
 
+int getWaveValue(uc1D *pImg);
+
 #endif

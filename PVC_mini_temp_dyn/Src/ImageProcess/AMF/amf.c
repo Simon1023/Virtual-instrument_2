@@ -3,6 +3,7 @@
 #include "Transmission_mode.h"
 
 #define THRESHOLD 150
+#define FEATURE_POINT 255
 
 #define TRUE 1
 #define FALSE 0
@@ -79,4 +80,30 @@ void resetAmf()
     //uc1D_Free(gBasic);
     gBasic.nr=gBasic.nc=0;
     gPixelCount=0;
+}
+
+int getWaveValue(uc1D *pImg)
+{
+    int i,j;
+    unsigned char x=0,y=0;
+    int value;
+    
+    for (i = 0; i<pImg->nr; i++)
+	{
+		for (j = 0; j<pImg->nc; j++)
+		{
+            if(pImg->m[i*pImg->nc+j]==FEATURE_POINT)
+            {
+                if(j>x)
+                {
+                    x=j;
+                    y=pImg->nr-i;
+                }
+            }
+        }
+    }
+    
+    value = (int)(((float)y/(float)(pImg->nr))*100)+0.5;
+    
+    return value;
 }

@@ -46,6 +46,7 @@ extern sd_uchar roiBuf[NUM_OF_PIXELS];
 
 extern ROI gRoi;
 extern int gRoiHandvalue;
+extern unsigned char gRoiWaveValue;
 
 uint8_t *pCurCmd =NULL;
 
@@ -706,6 +707,10 @@ static int8_t SCSI_BufferRead (USBD_HandleTypeDef  *pdev, uint8_t lun)
         {
             for(int i=0; i<segmentGetCount(); i++)
                 dstBuf[imageSize-1-i]=PNN_Calculate(dstBuf,gRoi.w,i);
+        }
+        else if(gRoi.type == ROI_TYPE_WAVE)
+        {
+            dstBuf[imageSize-1] = gRoiWaveValue;
         }
         else if(gRoi.type == ROI_TYPE_HAND)
         {
