@@ -60,6 +60,7 @@ public:
     static void getSegmentInfo(UCHAR *buf);
     static void pnpDataCollect(unsigned char *img, int roiH, int roiW);
 	static void bayer2rgb(unsigned char *pData, unsigned char *cData, int nr, int nc);
+    static void screenCapture();
 
 private:
 	static HANDLE fileHandle;

@@ -350,6 +350,8 @@ Void MyForm::ok_Click(System::Object^  sender, System::EventArgs^  e)
 	Utility::sendRoiInfo(roiX, roiY, roiW, roiH, rNum, gNum, bNum);
 
 	MyForm::capture_Click(sender, e);
+    
+    Utility::screenCapture();
 }
 
 Void MyForm::roiDigit_Click(System::Object^  sender, System::EventArgs^  e) 

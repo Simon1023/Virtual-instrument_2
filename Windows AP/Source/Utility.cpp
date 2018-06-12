@@ -12,6 +12,8 @@
 using namespace System;
 using namespace System::IO::Ports;
 using namespace System::ComponentModel;
+using namespace System::Windows::Forms;
+using namespace System::Drawing;
 using namespace std;
 
 HANDLE Utility::fileHandle = NULL;
@@ -480,4 +482,35 @@ void Utility::bayer2rgb(unsigned char *pData, unsigned char *cData, int nr, int 
 			cData[index * 3 + 2] = R;
 		}
 	}
+}
+
+void Utility::screenCapture()
+{
+    printf("screen capture\n");
+
+    //Bitmap^ myImage = gcnew Bitmap(Screen::PrimaryScreen->Bounds.Width, Screen::PrimaryScreen->Bounds.Height);
+    int width = Screen::PrimaryScreen->Bounds.Width * 2;
+    int height = Screen::PrimaryScreen->Bounds.Height;
+    Bitmap^ myImage = gcnew Bitmap(width, height);
+    Graphics^ g = Graphics::FromImage(myImage);
+    char filePath[50] = { 0 };
+    static int fileIndex = 0;
+
+    //Drawing::Size^ size = gcnew Drawing::Size(Screen::PrimaryScreen->Bounds.Width, Screen::PrimaryScreen->Bounds.Height);
+    Drawing::Size^ size = gcnew Drawing::Size(width, height);
+
+    //printf("PrimaryScreen->Bounds: %d,%d\n", Screen::PrimaryScreen->Bounds.Width, Screen::PrimaryScreen->Bounds.Height);
+
+    g->CopyFromScreen(0 - Screen::PrimaryScreen->Bounds.Width, 0, 0, 0, (Drawing::Size)size);
+    //IntPtr dc1 = g.GetHdc();
+    //g.ReleaseHdc(dc1);
+    sprintf(filePath, "ScreenCap\\20180611_%d.bmp", fileIndex++);
+    myImage->Save(gcnew String(filePath));
+
+    //myImage->Dispose();
+    delete myImage;
+    //g->Dispose;
+    delete g;
+
+    // myImage->Save("test.bmp");
 }
