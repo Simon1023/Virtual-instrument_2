@@ -85,16 +85,40 @@ void resetAmf()
 int getWaveValue(uc1D *pImg)
 {
     int i,j;
-    unsigned char x=0,y=0;
+    int x=0,y=0;
     int value;
+    char get=0;
     
+    for (j = pImg->nc-1;get==0; j--)
+    {
+        for (i = 0; i<pImg->nr; i++)
+        {
+            if(pImg->m[i*pImg->nc+j] == FEATURE_POINT && pImg->m[(i+1)*pImg->nc+j] == FEATURE_POINT)
+            {
+                x=pImg->nc-1-j;
+                y=pImg->nr-i+1;
+                
+                get =1;
+                break;
+            }
+        }
+        
+        if(j==0)
+            break;
+    }
+    
+/*    
     for (i = 0; i<pImg->nr; i++)
 	{
 		for (j = 0; j<pImg->nc; j++)
 		{
             if(pImg->m[i*pImg->nc+j]==FEATURE_POINT)
             {
-                if(j>x)
+                //test
+                if((i<pImg->nr-1)&&(pImg->m[(i+1)*pImg->nc+j]!=FEATURE_POINT))
+                    continue;
+                
+                if((j>x) || (j==x && (pImg->nr-i)>y))
                 {
                     x=j;
                     y=pImg->nr-i;
@@ -102,7 +126,8 @@ int getWaveValue(uc1D *pImg)
             }
         }
     }
-    
+*/
+
     value = (int)(((float)y/(float)(pImg->nr))*100)+0.5;
     
     return value;
