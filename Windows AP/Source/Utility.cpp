@@ -495,6 +495,8 @@ void Utility::screenCapture()
     Graphics^ g = Graphics::FromImage(myImage);
     char filePath[50] = { 0 };
     static int fileIndex = 0;
+    time_t now = time(0);
+    struct tm*  tstruct = localtime(&now);
 
     //Drawing::Size^ size = gcnew Drawing::Size(Screen::PrimaryScreen->Bounds.Width, Screen::PrimaryScreen->Bounds.Height);
     Drawing::Size^ size = gcnew Drawing::Size(width, height);
@@ -504,7 +506,8 @@ void Utility::screenCapture()
     g->CopyFromScreen(0 - Screen::PrimaryScreen->Bounds.Width, 0, 0, 0, (Drawing::Size)size);
     //IntPtr dc1 = g.GetHdc();
     //g.ReleaseHdc(dc1);
-    sprintf(filePath, "ScreenCap\\20180611_%d.bmp", fileIndex++);
+
+    sprintf(filePath, "ScreenCap\\%d%d%d_%d.bmp", tstruct->tm_year+1990, tstruct->tm_mon+1, tstruct->tm_mday,fileIndex++);
     myImage->Save(gcnew String(filePath));
 
     //myImage->Dispose();
