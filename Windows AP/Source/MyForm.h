@@ -249,7 +249,7 @@ namespace VirtualInstrument {
 		System::Void MyForm_Load(System::Object^  sender, System::EventArgs^  e);
 		System::Void connect_Click(System::Object^  sender, System::EventArgs^  e);
 		System::Void capture_Click(System::Object^  sender, System::EventArgs^  e);
-		void ThreadMethod(/*Object^ state*/);
+        void ThreadMethod(/*Object^ state*/);
 		System::Void video_Click(System::Object^  sender, System::EventArgs^  e);
 		System::Void ok_Click(System::Object^  sender, System::EventArgs^  e);
 		System::Void roiDigit_Click(System::Object^  sender, System::EventArgs^  e);
@@ -260,5 +260,8 @@ namespace VirtualInstrument {
 		void pictureBox1_MouseDown(Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
 		void pictureBox1_MouseMove(Object^ /*sender*/, System::Windows::Forms::MouseEventArgs^ e);
 		void pictureBox1_MouseUp(Object^ /*sender*/, System::Windows::Forms::MouseEventArgs^ e);
+        Void MyForm::captureImg();
+        void autorunThread(/*Object^ state*/);
+        void setOutMessage(String^ text);
 };
 }

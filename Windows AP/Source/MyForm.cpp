@@ -75,7 +75,16 @@ void MyForm::UpdateImage()
 	}
 }
 
-Void MyForm::capture_Click(System::Object^  sender, System::EventArgs^  e) 
+Void MyForm::capture_Click(System::Object^  sender, System::EventArgs^  e)
+{
+    MyForm::captureImg();
+
+    roiDigit->Enabled = true;
+    roiWave->Enabled = true;
+    roiHand->Enabled = true;
+}
+
+Void MyForm::captureImg() 
 {
 	unsigned char *pData = NULL, *cData = NULL, *pin;
 	int nc, nr;
@@ -129,21 +138,24 @@ Void MyForm::capture_Click(System::Object^  sender, System::EventArgs^  e)
         else if(k==2)
             sprintf(str, "[Digit] result:%d ,%d\n", cData[nr * nc - 1], cData[nr * nc - 2]);
 
-        out_message->Text = gcnew String(str);
+        //out_message->Text = gcnew String(str);
+        MyForm::setOutMessage(gcnew String(str));
     }
     else if (isRoi && roiType == ROI_TYPE_WAVE)
     {
         char str[128];
         sprintf(str, "[Wave] result:%d \n", cData[nr * nc - 1]);
 
-        out_message->Text = gcnew String(str);
+        //out_message->Text = gcnew String(str);
+        MyForm::setOutMessage(gcnew String(str));
     }
     else if (isRoi && roiType == ROI_TYPE_HAND)
     {
         char str[128];
         sprintf(str, "[Hand] result:%d \n", cData[nr * nc - 1]);
 
-        out_message->Text = gcnew String(str);
+        //out_message->Text = gcnew String(str);
+        MyForm::setOutMessage(gcnew String(str));
     }
 
     printf("The time = %fs\n", (double)(end - start) / CLOCKS_PER_SEC);
@@ -218,10 +230,11 @@ Void MyForm::capture_Click(System::Object^  sender, System::EventArgs^  e)
 */
 
 	free(cData);
-
+/*
 	roiDigit->Enabled = true;
 	roiWave->Enabled = true;
     roiHand->Enabled = true;
+*/
 }
 
 void MyForm::ThreadMethod(/*Object^ state*/)
@@ -307,6 +320,19 @@ Void MyForm::video_Click(System::Object^  sender, System::EventArgs^  e) {
 	}
 }
 
+void MyForm::autorunThread(/*Object^ state*/)
+{
+    while (1)
+    {
+        MyForm::captureImg();
+
+        Utility::screenCapture();
+
+        Sleep(10000); //10 seconds
+
+    }
+}
+
 Void MyForm::ok_Click(System::Object^  sender, System::EventArgs^  e) 
 {
     int rNum = 0, gNum = 0, bNum=0;
@@ -350,9 +376,8 @@ Void MyForm::ok_Click(System::Object^  sender, System::EventArgs^  e)
         isRoi = true;
     }
 
-    MyForm::capture_Click(sender, e);
-    
-    Utility::screenCapture();
+    oThread = gcnew Thread(gcnew ThreadStart(this, &MyForm::autorunThread));
+    oThread->Start();
 }
 
 Void MyForm::roiDigit_Click(System::Object^  sender, System::EventArgs^  e) 
@@ -530,6 +555,19 @@ void MyForm::pictureBox1_MouseUp(Object^ /*sender*/, System::Windows::Forms::Mou
 	// Reset the rectangle.
 	//theRectangle = System::Drawing::Rectangle::Rectangle(0, 0, 0, 0);
 	//delete(theRectangle);
+}
+
+delegate void outMessageDelegate(String^ text);
+void MyForm::setOutMessage(String^ text)
+{
+    if (out_message->InvokeRequired)
+    {
+        outMessageDelegate^ d =
+            gcnew outMessageDelegate(this, &MyForm::setOutMessage);
+        this->Invoke(d, gcnew array<Object^> { text });
+    }
+    else
+        out_message->Text = gcnew String(text);
 }
 /*
 #using <System.dll>
