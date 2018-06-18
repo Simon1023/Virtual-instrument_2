@@ -507,7 +507,7 @@ void Utility::screenCapture()
     //IntPtr dc1 = g.GetHdc();
     //g.ReleaseHdc(dc1);
 
-    sprintf(filePath, "ScreenCap\\%d%d%d_%d.bmp", tstruct->tm_year+1990, tstruct->tm_mon+1, tstruct->tm_mday,fileIndex++);
+    sprintf(filePath, "ScreenCap\\%d%d%d_%d.bmp", tstruct->tm_year+1900, tstruct->tm_mon+1, tstruct->tm_mday,fileIndex++);
     myImage->Save(gcnew String(filePath));
 
     //myImage->Dispose();
