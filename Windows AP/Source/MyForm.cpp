@@ -205,8 +205,10 @@ Void MyForm::captureImg()
 	UpdateImage();
 
     //20180316 Simon: Gather information for PNP data
+    /*
     if (isRoi && roiType == ROI_TYPE_DIGIT)
         Utility::pnpDataCollect(cData, roiH, roiW);
+    */
 
     //test
  /*
