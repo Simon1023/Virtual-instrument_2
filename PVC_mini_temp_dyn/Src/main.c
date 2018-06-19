@@ -870,7 +870,7 @@ int imageProcessing(unsigned char *src , unsigned char *dst , int nr , int nc)
 	imageSrc.nc = imageDst.nc = imageTemp.nc = imageBin.nc = nc;
 	imageSrc.m = src;
 	imageDst.m = dst;
-	imageTemp.m = pData;
+	imageTemp.m = amfBuf;
     
     //if(!imageTemp.m)
     //    return 1;
