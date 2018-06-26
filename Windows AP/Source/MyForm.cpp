@@ -92,7 +92,7 @@ Void MyForm::captureImg()
 
 	printf("[capture_Click] isRoi:%d\n", isRoi);
 
-	if (isRoi)
+	if (isRoi && TRANSFER_ROI_IMAGE)
 	{
 		nr = roiH;
 		nc = roiW;
@@ -119,24 +119,17 @@ Void MyForm::captureImg()
 		return;
 
     //2018/01/27 Simon : ROI after image processing is binarization
-    if (isRoi)
+    if (isRoi && TRANSFER_ROI_IMAGE)
         memcpy(cData, pData, nr * nc);
     else
         Utility::bayer2rgb(pData, cData, nr, nc);
 	
     //20180405 Simon: Get the result of PNN
+    /*
     if (isRoi && roiType == ROI_TYPE_DIGIT)
     {
         char str[128];
-        int k;
-
-        for (k = 0; k < Utility::getSegmentCount(); k++)
-            printf("PNN result[%d] = %d\n", k, cData[nr * nc - 1 - k]);
-
-        if(k==1)
-            sprintf(str, "[Digit] result:%d \n", cData[nr * nc - 1]);
-        else if(k==2)
-            sprintf(str, "[Digit] result:%d ,%d\n", cData[nr * nc - 1], cData[nr * nc - 2]);
+        sprintf(str, "[Digit] result:%d \n", pData[0]);
 
         //out_message->Text = gcnew String(str);
         MyForm::setOutMessage(gcnew String(str));
@@ -144,7 +137,7 @@ Void MyForm::captureImg()
     else if (isRoi && roiType == ROI_TYPE_WAVE)
     {
         char str[128];
-        sprintf(str, "[Wave] result:%d \n", cData[nr * nc - 1]);
+        sprintf(str, "[Wave] result:%d \n", pData[0]);
 
         //out_message->Text = gcnew String(str);
         MyForm::setOutMessage(gcnew String(str));
@@ -152,9 +145,18 @@ Void MyForm::captureImg()
     else if (isRoi && roiType == ROI_TYPE_HAND)
     {
         char str[128];
-        sprintf(str, "[Hand] result:%d \n", cData[nr * nc - 1]);
+        sprintf(str, "[Hand] result:%d \n", pData[0]);
 
         //out_message->Text = gcnew String(str);
+        MyForm::setOutMessage(gcnew String(str));
+    }
+    */
+    if (isRoi)
+    {
+        char str[128];
+
+        sprintf(str, " Result: %d \n", pData[0]);
+
         MyForm::setOutMessage(gcnew String(str));
     }
 
@@ -180,7 +182,7 @@ Void MyForm::captureImg()
 	for (int y = 0; y < nr; y++) {
 		for (int x = 0; x < nc; x++) {
             //2018/01/27 Simon : ROI after image processing is binarization
-            if (isRoi)
+            if (isRoi && TRANSFER_ROI_IMAGE == 1)
             {
                 pout[0] = pout[1] = pout[2] = (Byte)*pin;
                 pin++;
