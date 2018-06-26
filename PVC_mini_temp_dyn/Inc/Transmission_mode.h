@@ -34,4 +34,6 @@ typedef struct STRUCT_ROI {
 #define ROI_TYPE_WAVE   2
 #define ROI_TYPE_HAND   3
 
+#define TRANSFER_ROI_IMAGE   0
+
 #endif

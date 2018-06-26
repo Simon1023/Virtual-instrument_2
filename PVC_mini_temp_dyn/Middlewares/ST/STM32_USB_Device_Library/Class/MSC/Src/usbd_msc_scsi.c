@@ -45,8 +45,8 @@ extern sd_uchar dstBuf[NUM_OF_PIXELS];
 extern sd_uchar roiBuf[NUM_OF_PIXELS];
 
 extern ROI gRoi;
-extern int gRoiHandvalue;
-extern unsigned char gRoiWaveValue;
+//extern int gRoiHandvalue;
+//extern int gRoiWaveValue;
 
 uint8_t *pCurCmd =NULL;
 
@@ -215,8 +215,12 @@ int8_t SCSI_ProcessCmd(USBD_HandleTypeDef  *pdev,
 		return MSC_ImageInfoRead(pdev, lun, params);
 	
 	case SCSI_CLEAR_FLAG:
+    {
+        gTransfering=0;
+        
 		return MSC_ClearFlag(pdev, lun, params);
-
+    }
+    
 	//20180109 Simon Windows AP sends the information to PVC mini 
 	case SCSI_SEND_ROI_INFO:
     case SCSI_SEND_ROI_DIGIT_INFO:
@@ -247,6 +251,8 @@ int8_t SCSI_ProcessCmd(USBD_HandleTypeDef  *pdev,
 		//2018/01/27 Simon :Image Processing
         if(gTransfering==0)
             imageProcessing(roiBuf , dstBuf , gRoi.h , gRoi.w);
+        
+        gTransfering=1;
         
 		return MSC_BufferRead(pdev, lun, params);
 	}
@@ -643,11 +649,11 @@ static int8_t SCSI_BufferRead (USBD_HandleTypeDef  *pdev, uint8_t lun)
 
 	uint8_t *image_data;
 	int imageSize;
-	
+
 	image_data = (uint8_t *)pData;
 	
 	//20180116 Simon: Windows AP gets the image of ROI from PVC mini
-	if(pCurCmd[0] == SCSI_GET_ROI_IMAGE)
+	if(TRANSFER_ROI_IMAGE && (pCurCmd[0] == SCSI_GET_ROI_IMAGE))
 	{
 		imageSize = gRoi.w*gRoi.h;
 		
@@ -656,7 +662,7 @@ static int8_t SCSI_BufferRead (USBD_HandleTypeDef  *pdev, uint8_t lun)
 	}
 	else
 		imageSize = NUM_OF_PIXELS;
-	
+
 //	if(isReady)
 //	   audio_data = audio_data1;
 //	else
@@ -689,34 +695,6 @@ static int8_t SCSI_BufferRead (USBD_HandleTypeDef  *pdev, uint8_t lun)
   if (hmsc->scsi_blk_len == 0)
   {
     hmsc->bot_state = USBD_BOT_LAST_DATA_IN;      
-  }
-  
-  //20180425 Simon: Check the last data to transfer
-  if(hmsc->bot_state == USBD_BOT_LAST_DATA_IN)
-  {
-    gTransfering=0;   
-  }
-  else
-  {
-    gTransfering=1;
-
-    if(pCurCmd[0] == SCSI_GET_ROI_IMAGE)
-    {
-        //20180405 Simon: Inssert the result of PNN in image data
-        if(gRoi.type == ROI_TYPE_DIGIT)
-        {
-            for(int i=0; i<segmentGetCount(); i++)
-                dstBuf[imageSize-1-i]=PNN_Calculate(dstBuf,gRoi.w,i);
-        }
-        else if(gRoi.type == ROI_TYPE_WAVE)
-        {
-            dstBuf[imageSize-1] = gRoiWaveValue;
-        }
-        else if(gRoi.type == ROI_TYPE_HAND)
-        {
-            dstBuf[imageSize-1] = gRoiHandvalue;   
-        }
-    }
   }
   
   return 0;

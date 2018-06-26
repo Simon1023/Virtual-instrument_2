@@ -54,6 +54,7 @@ extern uint32_t DMA_FRAME_BUFFER;
 extern uint8_t CDC_Transmit_HS(uint8_t* Buf, uint16_t Len);
 extern int8_t CDC_Receive_HS  (uint8_t* pbuf, uint32_t *Len);
 extern void PNN_Initialize();
+extern int PNN_Calculate(unsigned char* img,int nc,unsigned char index);
 extern int houghLineDetect(void *pSrc);
 extern void grayDilation(uc1D *ImaSrc, uc1D *ImaDst);
 
@@ -87,8 +88,9 @@ UART_HandleTypeDef huart2;
 SDRAM_HandleTypeDef hsdram1;
 
 ROI gRoi;
-int gRoiHandvalue =-1;
-int gRoiWaveValue = 0;
+//int gRoiHandvalue =-1;
+//int gRoiWaveValue = 0;
+//int gRoiDigitvalue =0; 
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -865,7 +867,8 @@ int SendImage(uint8_t * ImgBuf)
 int imageProcessing(unsigned char *src , unsigned char *dst , int nr , int nc)
 {
 	uc1D imageSrc,imageDst,imageTemp,imageBin;
-		
+	unsigned char *pResult;
+	
 	imageSrc.nr = imageDst.nr = imageTemp.nr = imageBin.nr = nr;
 	imageSrc.nc = imageDst.nc = imageTemp.nc = imageBin.nc = nc;
 	imageSrc.m = src;
@@ -895,8 +898,15 @@ int imageProcessing(unsigned char *src , unsigned char *dst , int nr , int nc)
     }
     */
     
+    if(TRANSFER_ROI_IMAGE)
+        pResult = dst;
+    else
+        pResult = pData;
+        
     if(gRoi.type == ROI_TYPE_DIGIT)
     {
+        unsigned char result[3]={0};
+        
         //2018/01/28 Simon: binaryErosion includes binarization
         //binarization(&imageSrc, &imageBin, 128);
 	
@@ -912,13 +922,19 @@ int imageProcessing(unsigned char *src , unsigned char *dst , int nr , int nc)
         
         if(segment(&imageDst) != 0)
             return 1;
+        
+        for(int i=0; i<segmentGetCount(); i++)
+            result[i]=PNN_Calculate(dstBuf,gRoi.w,i);
+        
+        *pResult = result[2]*100+result[1]*10+result[0];
     }
     else if(gRoi.type == ROI_TYPE_WAVE)
     {
         bayer2gray(&imageSrc, &imageDst);
         if(doAmf(&imageDst)==AMF_RESULT_OK)
         {  
-            gRoiWaveValue = getWaveValue(&imageDst);
+            //gRoiWaveValue = getWaveValue(&imageDst);
+            *pResult = getWaveValue(&imageDst);
         }
     }
     else if(gRoi.type == ROI_TYPE_HAND)
@@ -938,7 +954,10 @@ int imageProcessing(unsigned char *src , unsigned char *dst , int nr , int nc)
     #endif
         if(doAmf(&imageDst)==AMF_RESULT_OK)
         {  
-            gRoiHandvalue = houghLineDetect(&imageDst);
+            //gRoiHandvalue = houghLineDetect(&imageDst);
+
+            *pResult = houghLineDetect(&imageDst);
+
         }
     }
         
