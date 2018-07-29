@@ -17,8 +17,9 @@ int segment(uc1D *imageSrc)
 	unsigned char hMax = 0;
 	int projNr = 0;
 	unsigned char index=0;
-	
-	
+	unsigned char *p;
+	unsigned char *curRow;
+    
 	if(gpCharInfo == NULL)
 		gpCharInfo = (CHAR_INFO *)calloc(MAX_CHAR,sizeof(CHAR_INFO));
 	
@@ -34,7 +35,8 @@ int segment(uc1D *imageSrc)
 				count++;
 		}
 		
-		if(count>(imageSrc->nc/THRESHOLD))
+		//if(count>(imageSrc->nc/THRESHOLD))
+        if(count>0)
 		{
 			if(hMin==0)
 				hMin = y;
@@ -47,13 +49,29 @@ int segment(uc1D *imageSrc)
 	//vertical
 	for(x=0,count=0,startX=NO_ASSIGN;x<imageSrc->nc;x++,count=0)
 	{
-		for(y=0;y<imageSrc->nr;y++)
+		for(y=0;y<projNr;y++)
 		{
-			if(*(imageSrc->m+x+y*imageSrc->nc) == 255)
-				count++;			
+            curRow = imageSrc->m+(y+hMin-1)*imageSrc->nc;
+			//if(*(imageSrc->m+x+y*imageSrc->nc) == 255)
+            if(*(curRow+x) == 255)
+            { 
+                /*
+                //if((y==hMin-1) && (*(imageSrc->m+x+(y+1)*imageSrc->nc) == 255))
+                if((y==0) && (*(curRow+x+imageSrc->nc) == 255))
+                    count++;
+                //else if((y==hMax-1) && (*(imageSrc->m+x+(y-1)*imageSrc->nc) == 255))
+                else if((y==projNr-1) && (*(curRow+x-imageSrc->nc) == 255))
+                    count++;                
+                //else if((*(imageSrc->m+x+(y-1)*imageSrc->nc) == 255) || (*(imageSrc->m+x+(y+1)*imageSrc->nc) == 255))
+                else if((*(curRow+x-imageSrc->nc) == 255) || (*(curRow+x+imageSrc->nc) == 255))
+                    count++;
+                */
+                count++;
+            }
 		}
 		
-		if( count>(imageSrc->nr/THRESHOLD))
+		//if( count>(imageSrc->nr/THRESHOLD))
+        if( count>0)
 		{
 			if(startX == NO_ASSIGN)
 				startX = x;
@@ -62,6 +80,12 @@ int segment(uc1D *imageSrc)
 		}
 		else
 		{
+            if(x-startX+1 < projNr/2)
+                continue;
+            
+            //if(*(imageSrc->m+x+(hMin-1)*imageSrc->nc) == *(imageSrc->m+x+(hMax-1)*imageSrc->nc) == 255)
+            //    continue;
+            
 			if(startX != NO_ASSIGN)
 			{
 				/*
@@ -75,6 +99,27 @@ int segment(uc1D *imageSrc)
 				gpCharInfo[index].nc = endX-startX+1;
 				gpCharInfo[index].nr = projNr;
 				
+                //Two digits are connected
+                if(gpCharInfo[index].nc>gpCharInfo[index].nr)
+                {
+                    unsigned char reSegmentCount=0;
+                    unsigned char reSegmentNc=0;
+                    int i;
+                    
+                    reSegmentCount = gpCharInfo[index].nc/gpCharInfo[index].nr+1;
+                    reSegmentNc = gpCharInfo[index].nc/reSegmentCount;
+                    
+                    for(i=0;i<reSegmentCount;i++)
+                    {                        
+                        gpCharInfo[index+i].x = startX+i*reSegmentNc;
+                        gpCharInfo[index+i].y = hMin;
+                        gpCharInfo[index+i].nc = reSegmentNc;
+                        gpCharInfo[index+i].nr = projNr;
+                    }
+                    
+                    index=index+reSegmentCount-1;
+                }
+                
 				index++;
 				startX = NO_ASSIGN;					
 			}
@@ -85,24 +130,68 @@ int segment(uc1D *imageSrc)
 	//pChar = gpProjection ;
 	
 	//Draw the boundry for testing
-    /*
+ #if 0
 	for(x=0;x<imageSrc->nc;x++)
-		*(imageSrc->m+hMin*imageSrc->nc+x) = 128;
-
+    {
+        //*(imageSrc->m+hMin*imageSrc->nc+x) = 128;
+        p=imageSrc->m+hMin*imageSrc->nc+x;
+        if(*p!=255)
+            *p=120;
+    }
+    
 	for(x=0;x<imageSrc->nc;x++)
-		*(imageSrc->m+hMax*imageSrc->nc+x) = 128;	
-	
+    {
+		//*(imageSrc->m+hMax*imageSrc->nc+x) = 128;	
+        p=imageSrc->m+hMax*imageSrc->nc+x;
+        if(*p!=255)
+            *p=120;       
+	}
+    
 	for(index=0;index<gCharCount;index++)
 	{
 		for(y=0;y<imageSrc->nr;y++)
 		{
 			//*(gpProjection[index].m + y*imageSrc->nc) = 128;
 			//*(gpProjection[index].m + gpProjection[index].nc + y*imageSrc->nc) = 128;
-			*(imageSrc->m + gpCharInfo[index].x + y*imageSrc->nc)=128; 
-			*(imageSrc->m + gpCharInfo[index].x + gpCharInfo[index].nc + y*imageSrc->nc)=128; 
+			
+            //*(imageSrc->m + gpCharInfo[index].x + y*imageSrc->nc)=128; 
+            p= imageSrc->m + gpCharInfo[index].x + y*imageSrc->nc;
+            if(*p!=255)
+                *p=100;
+            
+			//*(imageSrc->m + gpCharInfo[index].x + gpCharInfo[index].nc + y*imageSrc->nc)=128; 
+            //p= imageSrc->m + gpCharInfo[index].x + gpCharInfo[index].nc + y*imageSrc->nc;
+            p+=gpCharInfo[index].nc-1;
+            if(*p!=255)
+                *p=100;            
 		}
 	}
-	*/
+ #endif
+    
+    //20180729 Simon :Write the information of segmentation in image for debugging
+    //test -->
+    p= imageSrc->m +imageSrc->nc;
+    *(p++) = gpCharInfo[0].x;
+    *(p++) = gpCharInfo[0].y;
+    *(p++) = gpCharInfo[0].nr;
+    *(p++) = gpCharInfo[0].nc;
+
+    if(gCharCount>1)
+    {
+        *(p++) = gpCharInfo[1].x;
+        *(p++) = gpCharInfo[1].y;
+        *(p++) = gpCharInfo[1].nr;
+        *(p++) = gpCharInfo[1].nc;
+    }
+
+    if(gCharCount>2)
+    {
+        *(p++) = gpCharInfo[2].x;
+        *(p++) = gpCharInfo[2].y;
+        *(p++) = gpCharInfo[2].nr;
+        *(p++) = gpCharInfo[2].nc;
+    }
+    //test <--
     
 	return 0;
 }
