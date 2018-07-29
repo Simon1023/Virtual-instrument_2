@@ -919,14 +919,66 @@ int imageProcessing(unsigned char *src , unsigned char *dst , int nr , int nc)
         //binaryClosing(&imageSrc, &imageDst);
         binaryDilation(&imageBin, &imageTemp);
         binaryErosion(&imageTemp, &imageDst);
+
+        //Skip all image processing
+        //test-->
+        /*
+        {
+            uc1D *ImaSrc = &imageTemp;
+            uc1D *ImaDst = &imageDst;
+         	unsigned char *pin = ImaSrc->m;
+            unsigned char *pout = ImaDst->m;
+	
+            for(int i=0;i<ImaSrc->nr;i++)
+                for(int j=0;j<ImaSrc->nc;j++)
+                {
+                    *pout = *pin;
+                    pin++;
+                    pout++;
+                }   
+        }
+        */
+        //test<--
         
         if(segment(&imageDst) != 0)
             return 1;
         
-        for(int i=0; i<segmentGetCount(); i++)
-            result[i]=PNN_Calculate(dstBuf,gRoi.w,i);
-        
-        *pResult = result[2]*100+result[1]*10+result[0];
+        //20180729 Simon: Put more informatio in image
+        switch(segmentGetCount())
+        {
+            case 1:
+                *pResult=PNN_Calculate(dstBuf,gRoi.w,0);
+
+                //test -->
+                *(pResult+1) =1;
+                *(pResult+2) = PNN_Calculate(dstBuf,gRoi.w,0);
+                //test<--
+            
+                break;
+            case 2:
+                *pResult=PNN_Calculate(dstBuf,gRoi.w,0)*10+PNN_Calculate(dstBuf,gRoi.w,1);
+            
+                //test -->
+                *(pResult+1) =2;
+                *(pResult+2) = PNN_Calculate(dstBuf,gRoi.w,0);
+                *(pResult+3) = PNN_Calculate(dstBuf,gRoi.w,1);
+                //test<--
+            
+                break;
+            case 3:
+                *pResult=PNN_Calculate(dstBuf,gRoi.w,0)*100+PNN_Calculate(dstBuf,gRoi.w,1)*10+PNN_Calculate(dstBuf,gRoi.w,2);
+
+                //test -->
+                *(pResult+1) =3;
+                *(pResult+2) = PNN_Calculate(dstBuf,gRoi.w,0);
+                *(pResult+3) = PNN_Calculate(dstBuf,gRoi.w,1);
+                *(pResult+4) = PNN_Calculate(dstBuf,gRoi.w,2);
+                //test<--
+            break;
+            default:
+                *pResult =0;           
+        }
+
     }
     else if(gRoi.type == ROI_TYPE_WAVE)
     {
