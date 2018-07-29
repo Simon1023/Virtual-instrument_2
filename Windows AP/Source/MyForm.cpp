@@ -217,26 +217,35 @@ Void MyForm::captureImg()
         Utility::pnpDataCollect(cData, roiH, roiW);
     */
 
-    //test
- /*
+    //20180729 Simon: Print the value of ROI for testing
+    /*
+    //test-->
     if (isRoi)
     {
-        printf("============================================================\n");
-        printf("nr=%d,nc=%d\n",nr,nc);
+    printf("============================================================\n");
+    printf("nr=%d,nc=%d\n",nr,nc);
 
-        unsigned char * p = cData;
-        for (int i = 0; i < nr; i++)
-        {
-            for (int j = 0; j < nc; j++)
-            {
-                printf("%d ",*p);
-                p++;
-            }
-            printf("\n");
-        }
-        printf("============================================================\n");
+    printf("    ");
+    for(int i =0;i<nc+1;i++)
+    printf("%3d ", i);
+    printf("\n");
+
+    unsigned char * p = cData;
+    for (int i = 0; i < nr; i++)
+    {
+    printf("%3d ", i);
+
+    for (int j = 0; j < nc; j++)
+    {
+    printf("%3d ",*p);
+    p++;
     }
-*/
+    printf("\n");
+    }
+    printf("============================================================\n");
+    }
+    //test<--
+    */
 
 	free(cData);
 /*
