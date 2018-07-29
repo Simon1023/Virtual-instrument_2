@@ -41,6 +41,11 @@ Void MyForm::MyForm_Load(System::Object^  sender, System::EventArgs^  e)
     textBox_G->Enabled = false;
     textBox_B->Enabled = false;
 	isRoi = false;
+
+    //20180729 Simon: Set RGB filter to 255 by default 
+    textBox_R->Text = "255";
+    textBox_G->Text = "255";
+    textBox_B->Text = "255";
 }
 
 Void MyForm::connect_Click(System::Object^  sender, System::EventArgs^  e)
