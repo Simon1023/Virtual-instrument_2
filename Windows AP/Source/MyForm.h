@@ -190,33 +190,33 @@ namespace VirtualInstrument {
             // 
             // textBox_R
             // 
-            this->textBox_R->Location = System::Drawing::Point(570, 534);
-            this->textBox_R->Name = L"textBox_RGB";
-            this->textBox_R->Size = System::Drawing::Size(25, 22);
-            this->textBox_R->TabIndex = 9;
+            //this->textBox_R->Location = System::Drawing::Point(570, 534);
+            //this->textBox_R->Name = L"textBox_RGB";
+            //this->textBox_R->Size = System::Drawing::Size(25, 22);
+            //this->textBox_R->TabIndex = 9;
             // 
             // textBox_G
             // 
-            this->textBox_G->Location = System::Drawing::Point(595, 534);
-            this->textBox_G->Name = L"textBox_G";
-            this->textBox_G->Size = System::Drawing::Size(25, 22);
-            this->textBox_G->TabIndex = 10;
+            //this->textBox_G->Location = System::Drawing::Point(595, 534);
+            //this->textBox_G->Name = L"textBox_G";
+            //this->textBox_G->Size = System::Drawing::Size(25, 22);
+            //this->textBox_G->TabIndex = 10;
             // 
             // textBox_B
             // 
-            this->textBox_B->Location = System::Drawing::Point(620, 534);
-            this->textBox_B->Name = L"textBox_B";
-            this->textBox_B->Size = System::Drawing::Size(25, 22);
-            this->textBox_B->TabIndex = 11;
+            //this->textBox_B->Location = System::Drawing::Point(620, 534);
+            //this->textBox_B->Name = L"textBox_B";
+            //this->textBox_B->Size = System::Drawing::Size(25, 22);
+            //this->textBox_B->TabIndex = 11;
             // 
             // label_RGB
             // 
-            this->label_RGB->AutoSize = true;
-            this->label_RGB->Location = System::Drawing::Point(550, 522);
-            this->label_RGB->Name = L"label_RGB";
-            this->label_RGB->Size = System::Drawing::Size(54, 12);
-            this->label_RGB->TabIndex = 12;
-            this->label_RGB->Text = L"Filter R     G     B";
+            //this->label_RGB->AutoSize = true;
+            //this->label_RGB->Location = System::Drawing::Point(550, 522);
+            //this->label_RGB->Name = L"label_RGB";
+            //this->label_RGB->Size = System::Drawing::Size(54, 12);
+            //this->label_RGB->TabIndex = 12;
+            //this->label_RGB->Text = L"Filter R     G     B";
             // 
 			// MyForm
 			// 
