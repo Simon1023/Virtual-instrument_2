@@ -108,6 +108,7 @@ namespace VirtualInstrument {
 			// 
 			// video
 			// 
+            /*
 			this->video->Location = System::Drawing::Point(430, 522);
 			this->video->Name = L"video";
 			this->video->Size = System::Drawing::Size(65, 23);
@@ -115,6 +116,7 @@ namespace VirtualInstrument {
 			this->video->Text = L"video";
 			this->video->UseVisualStyleBackColor = true;
 			this->video->Click += gcnew System::EventHandler(this, &MyForm::video_Click);
+            */
 			// 
 			// panel1
 			// 
@@ -225,7 +227,7 @@ namespace VirtualInstrument {
 			this->ClientSize = System::Drawing::Size(722, 581);
 			this->Controls->Add(this->out_message);
 			this->Controls->Add(this->panel1);
-			this->Controls->Add(this->video);
+			//this->Controls->Add(this->video);
 			this->Controls->Add(this->capture);
 			this->Controls->Add(this->connect);
 			this->Controls->Add(this->ok);
