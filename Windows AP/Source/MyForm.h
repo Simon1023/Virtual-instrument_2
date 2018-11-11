@@ -88,7 +88,7 @@ namespace VirtualInstrument {
 			// 
 			// connect
 			// 
-			this->connect->Location = System::Drawing::Point(10, 522);
+			this->connect->Location = System::Drawing::Point(10, 275);
 			this->connect->Name = L"connect";
 			this->connect->Size = System::Drawing::Size(65, 23);
 			this->connect->TabIndex = 0;
@@ -98,7 +98,7 @@ namespace VirtualInstrument {
 			// 
 			// capture
 			// 
-			this->capture->Location = System::Drawing::Point(80, 522);
+			this->capture->Location = System::Drawing::Point(80, 275);
 			this->capture->Name = L"capture";
 			this->capture->Size = System::Drawing::Size(65, 23);
 			this->capture->TabIndex = 1;
@@ -119,12 +119,12 @@ namespace VirtualInstrument {
             */
 			// 
 			// panel1
-			// 
+			//
 			this->panel1->AutoScroll = true;
 			this->panel1->Controls->Add(this->pictureBox1);
 			this->panel1->Location = System::Drawing::Point(13, 13);
 			this->panel1->Name = L"panel1";
-			this->panel1->Size = System::Drawing::Size(680, 503);
+			this->panel1->Size = System::Drawing::Size(340, 260);
 			this->panel1->TabIndex = 3;
 			this->panel1->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &MyForm::panel1_Paint);
 			// 
@@ -133,7 +133,7 @@ namespace VirtualInstrument {
 			this->pictureBox1->Location = System::Drawing::Point(4, 4);
 			this->pictureBox1->Name = L"pictureBox1";
 			this->pictureBox1->SizeMode = PictureBoxSizeMode::AutoSize;
-			this->pictureBox1->Size = System::Drawing::Size(640, 480);
+			this->pictureBox1->Size = System::Drawing::Size(320, 240);
 			//this->pictureBox1->TabIndex = 0;
 			//this->pictureBox1->TabStop = false;
 			//this->pictureBox1->Click += gcnew System::EventHandler(this, &MyForm::pictureBox1_Click);
@@ -144,7 +144,7 @@ namespace VirtualInstrument {
 			// out_message
 			// 
 			this->out_message->AutoSize = true;
-			this->out_message->Location = System::Drawing::Point(10, 560);
+			this->out_message->Location = System::Drawing::Point(10, 300);
 			this->out_message->Name = L"out_message";
 			this->out_message->Size = System::Drawing::Size(85, 12);
 			this->out_message->TabIndex = 4;
@@ -152,7 +152,7 @@ namespace VirtualInstrument {
 			// 
 			// ok
 			// 
-			this->ok->Location = System::Drawing::Point(360, 522);
+			this->ok->Location = System::Drawing::Point(360, 275);
 			this->ok->Name = L"ok";
 			this->ok->Size = System::Drawing::Size(65, 23);
 			this->ok->TabIndex = 5;
@@ -162,7 +162,7 @@ namespace VirtualInstrument {
 			// 
 			// roiDigit
 			// 
-			this->roiDigit->Location = System::Drawing::Point(150, 522);
+			this->roiDigit->Location = System::Drawing::Point(150, 275);
 			this->roiDigit->Name = L"roiDigit";
 			this->roiDigit->Size = System::Drawing::Size(65, 23);
 			this->roiDigit->TabIndex = 6;
@@ -172,7 +172,7 @@ namespace VirtualInstrument {
 			// 
 			// roiWave
 			// 
-			this->roiWave->Location = System::Drawing::Point(220, 522);
+			this->roiWave->Location = System::Drawing::Point(220, 275);
 			this->roiWave->Name = L"roiWave";
 			this->roiWave->Size = System::Drawing::Size(65, 23);
 			this->roiWave->TabIndex = 7;
@@ -182,7 +182,7 @@ namespace VirtualInstrument {
             // 
             // roiHand
             // 
-            this->roiHand->Location = System::Drawing::Point(290, 522);
+            this->roiHand->Location = System::Drawing::Point(290, 275);
             this->roiHand->Name = L"roiHand";
             this->roiHand->Size = System::Drawing::Size(65, 23);
             this->roiHand->TabIndex = 8;
@@ -224,7 +224,7 @@ namespace VirtualInstrument {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(722, 581);
+			this->ClientSize = System::Drawing::Size(430, 330);
 			this->Controls->Add(this->out_message);
 			this->Controls->Add(this->panel1);
 			//this->Controls->Add(this->video);
