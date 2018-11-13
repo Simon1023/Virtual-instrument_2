@@ -7,7 +7,9 @@
 #define TRUE 1
 #define FALSE 0
 
-#define TRANSFER_ROI_IMAGE   0
+#define DEVLOP_MODE
+
+#define TRANSFER_ROI_IMAGE   1
 
 //SCSI command
 #define SCSI_GET_IMAGE_INFO		    0xD0

@@ -211,11 +211,11 @@ Void MyForm::captureImg()
 	//將影像顯示在pictureBox
 	UpdateImage();
 
+#ifdef DEVLOP_MODE
     //20180316 Simon: Gather information for PNP data
-    /*
     if (isRoi && roiType == ROI_TYPE_DIGIT)
         Utility::pnpDataCollect(cData, roiH, roiW);
-    */
+#endif    
 
     //20180729 Simon: Print the value of ROI for testing
     /*
@@ -394,8 +394,13 @@ Void MyForm::ok_Click(System::Object^  sender, System::EventArgs^  e)
         isRoi = true;
     }
 
+#ifdef DEVLOP_MODE
+    MyForm::captureImg();
+    Utility::screenCapture();
+#else
     oThread = gcnew Thread(gcnew ThreadStart(this, &MyForm::autorunThread));
     oThread->Start();
+#endif
 }
 
 Void MyForm::roiDigit_Click(System::Object^  sender, System::EventArgs^  e) 
