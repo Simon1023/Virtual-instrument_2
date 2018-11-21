@@ -25,6 +25,63 @@ int segment(uc1D *imageSrc)
 	
 	if(gpCharInfo == NULL)
 		return 1;
+
+#if 0
+    //Draw the picture of statistics for white pixel
+    static int testIndex =0;
+    
+    if(testIndex ==1)
+    {
+        //horizontal
+        for(y=0,count=0;y<imageSrc->nr;y++,count=0)
+        {
+            for(x=0;x<imageSrc->nc;x++)
+            {
+                if(*(imageSrc->m+x+y*imageSrc->nc) == 255)
+                {
+                    count++;
+                    *(imageSrc->m+x+y*imageSrc->nc) = 0;
+                }
+            }
+
+            for(x=0;x<count;x++)
+            {
+                *(imageSrc->m+x+y*imageSrc->nc) = 255;
+            }
+        }
+        
+        testIndex =2;
+        return 0;
+    }
+    
+    if(testIndex ==2)
+    {
+        //vertical
+        for(x=0,count=0;x<imageSrc->nc;x++,count=0)
+		{
+            for(y=0;y<imageSrc->nr;y++)
+            {
+                if(*(imageSrc->m+x+y*imageSrc->nc) == 255)
+                { 
+                    count++;
+                    *(imageSrc->m+x+y*imageSrc->nc)=0;                
+                }
+            }
+            
+            for(y=0;y<count;y++)
+            {
+                *(imageSrc->m+x+(imageSrc->nr-1-y)*imageSrc->nc) = 255;
+            }            
+            
+		}
+        
+        testIndex =1;
+        return 0;
+    }
+    
+    if(testIndex ==0)
+        testIndex =1;
+#endif
 	
 	//horizontal
 	for(y=0,count=0;y<imageSrc->nr;y++,count=0)
@@ -129,7 +186,7 @@ int segment(uc1D *imageSrc)
 	gCharCount = index;
 	//pChar = gpProjection ;
 	
-	//Draw the boundry for testing
+	//Draw the boundry after segmenation for testing
  #if 0
 	for(x=0;x<imageSrc->nc;x++)
     {
@@ -167,9 +224,10 @@ int segment(uc1D *imageSrc)
 		}
 	}
  #endif
-    
+
     //20180729 Simon :Write the information of segmentation in image for debugging
     //test -->
+#if 1
     p= imageSrc->m +imageSrc->nc;
     *(p++) = gpCharInfo[0].x;
     *(p++) = gpCharInfo[0].y;
@@ -191,6 +249,7 @@ int segment(uc1D *imageSrc)
         *(p++) = gpCharInfo[2].nr;
         *(p++) = gpCharInfo[2].nc;
     }
+#endif
     //test <--
     
 	return 0;
@@ -250,3 +309,45 @@ void segmentGetRatio(unsigned char* srcImg,int nc,unsigned char charIndex, float
     }
       
 }
+
+//20181031 Check range for wave
+#if 0
+void segmentWave(uc1D *imageSrc , uc1D *imageDst)
+{
+    int x=0;
+	int y=0;
+    int count=0;
+    int top=-1,buttom=-1,right=-1;
+    unsigned char threshold = 100;
+    
+    //horizontal
+	for(y=0,count=0;y<imageSrc->nr;y++,count=0)
+    {
+        for(x=0;x<imageSrc->nc;x++)
+        {
+            if(*(imageSrc->m+x+y*imageSrc->nc) > threshold)
+                count++;
+            
+            if(top==-1 && count>(imageSrc->nc/2))
+                top = y;
+            else if(top!=-1 && count<(imageSrc->nc/2))
+                buttom = y-1;
+        }
+    }
+    
+    //vertical
+    for(x=0,count=0;x<imageSrc->nc;x++,count=0)
+    {
+        for(y=0;y<imageSrc->nr;y++)
+        {
+            if(*(imageSrc->m+x+y*imageSrc->nc)  < threshold)
+            { 
+                count++;
+                
+                if(right==-1 && count>(imageSrc->nr/2))
+                    ;
+            }
+        }
+    }
+}
+#endif
