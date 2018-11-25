@@ -137,7 +137,7 @@ int segment(uc1D *imageSrc)
 		}
 		else
 		{
-            if(x-startX+1 < projNr/2)
+            if(x-startX+1 < 2)
                 continue;
             
             //if(*(imageSrc->m+x+(hMin-1)*imageSrc->nc) == *(imageSrc->m+x+(hMax-1)*imageSrc->nc) == 255)
@@ -156,6 +156,12 @@ int segment(uc1D *imageSrc)
 				gpCharInfo[index].nc = endX-startX+1;
 				gpCharInfo[index].nr = projNr;
 				
+                //nc<3, patch 1 column. This is for number 1
+                if(gpCharInfo[index].nc<3)
+                {
+                    gpCharInfo[index].nc++;
+                }
+                
                 //Two digits are connected
                 if(gpCharInfo[index].nc>gpCharInfo[index].nr)
                 {
@@ -308,6 +314,39 @@ void segmentGetRatio(unsigned char* srcImg,int nc,unsigned char charIndex, float
         array[blockIndex] = blackRatio;
     }
       
+}
+
+void segmentGetCharFeature(unsigned char* srcImg,int nc,unsigned char charIndex,char* charNr,char* charNc, char* verticalLine)
+{
+    CHAR_INFO *pCharInfo = gpCharInfo+charIndex;
+    int x,y,count;
+    int start = pCharInfo->y*nc + pCharInfo->x;
+    
+    *charNr = pCharInfo->nr;
+    *charNc = pCharInfo->nc;
+    *verticalLine=0;
+    
+    for(x=0,count=0;x<pCharInfo->nc;x++,count=0)
+    {
+        for(y=0;y<pCharInfo->nr;y++)
+        {
+            if(srcImg[start+y*nc+x] == 255)
+            { 
+                count++;
+            }
+        }
+        
+        if(count > (pCharInfo->nr-3))
+            *verticalLine+=1;
+    }    
+}
+
+unsigned char segmentGetPointValue(unsigned char* srcImg,int nc,unsigned char charIndex,int x,int y)
+{
+    CHAR_INFO *pCharInfo = gpCharInfo+charIndex;
+    int start = pCharInfo->y*nc + pCharInfo->x;
+    
+    return srcImg[start+y*nc+x];
 }
 
 //20181031 Check range for wave

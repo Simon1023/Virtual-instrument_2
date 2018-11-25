@@ -25,6 +25,8 @@ static float* array3[PNN_DATA_NUM]={0};
 static float  array4[PNN_DATA_NUM][PNN_CLASSFICAT_NUM]={0};
 
 extern void segmentGetRatio(unsigned char* img,int nc,unsigned char charIndex, float* array);
+extern void segmentGetCharFeature(unsigned char* srcImg,int nc,unsigned char charIndex,char* charNr,char* charNc, char* verticalLine);
+extern unsigned char segmentGetPointValue(unsigned char* srcImg,int nc,unsigned char charIndex,int x,int y);
 
 static void PNN_SetSmoothParameter(float p)
 {
@@ -139,11 +141,49 @@ void PNN_Initialize()
    	PNN_SetSmoothParameter(5);
 }
 
+static int identifySpecialNum(unsigned char* img,int nc,unsigned char index,int pnnResult)
+{
+    char charNr,charNc,verticalLine;
+    
+    segmentGetCharFeature(img,nc,index,&charNr,&charNc,&verticalLine);
+    
+    //1
+    if(charNc<5 && verticalLine>0)
+        return 1;
+    
+    //8
+    if(pnnResult==1 && charNc>4 && verticalLine>2)
+        return 8;
+    
+    //Identify 2 or 7 by the last 2 points
+    if(pnnResult==2 || pnnResult==7)
+    {
+        if(segmentGetPointValue(img,nc,index,charNc-1,charNr-1)==255 && 
+            segmentGetPointValue(img,nc,index,charNc-2,charNr-1)==255)
+            return 2;
+        else
+            return 7;
+        
+    }
+    
+    //Identify 3 or 5 by the first 2 points
+    if(pnnResult==3 || pnnResult==5)
+    {
+        if(segmentGetPointValue(img,nc,index,0,0)==0 && 
+            segmentGetPointValue(img,nc,index,1,0)==0)
+            return 5;
+        else
+            return 3;
+        
+    }
+    
+    return pnnResult;
+}
+
 int PNN_Calculate(unsigned char* img,int nc,unsigned char index)
 {   
-    int result;
-    
-    
+    int result=-1;
+      
     segmentGetRatio(img,nc,index,input.m);
     //test
     /*
@@ -160,6 +200,8 @@ int PNN_Calculate(unsigned char* img,int nc,unsigned char index)
     
     result = PNN_Using(&input,&output);
 
+    result = identifySpecialNum(img,nc,index,result);
+     
     return result;
 }
 
