@@ -156,6 +156,7 @@ static int identifySpecialNum(unsigned char* img,int nc,unsigned char index,int 
         return 8;
     
     //Identify 2 or 7 by the last 2 points
+    /*
     if(pnnResult==2 || pnnResult==7)
     {
         if(segmentGetPointValue(img,nc,index,charNc-1,charNr-1)==255 && 
@@ -165,8 +166,10 @@ static int identifySpecialNum(unsigned char* img,int nc,unsigned char index,int 
             return 7;
         
     }
+    */
     
     //Identify 3 or 5 by the first 2 points
+    /*
     if(pnnResult==3 || pnnResult==5)
     {
         if(segmentGetPointValue(img,nc,index,0,0)==0 && 
@@ -175,6 +178,14 @@ static int identifySpecialNum(unsigned char* img,int nc,unsigned char index,int 
         else
             return 3;
         
+    }
+    */
+    
+    //Identify 6 or 0
+    if(pnnResult==6)
+    {
+        if(verticalLine>0)
+            return 0;      
     }
     
     return pnnResult;
