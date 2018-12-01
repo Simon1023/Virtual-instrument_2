@@ -75,7 +75,6 @@ static void transform(uc1D* im, uc2D* hough_ima)
 		    
    	float r;
    	int nr,angle;
-    int middle = im->nc/2;
     
     maxPoint.angle = maxPoint.count = maxPoint.nr = maxPoint.r = 0;
     
@@ -103,15 +102,81 @@ static void transform(uc1D* im, uc2D* hough_ima)
                     featurePointCount++;
                 #endif
                 
-                if(j<middle)
-                    featurePointLeft++;
-                else
-                    featurePointRight++;
-                    
+                //Ignore the center zone
+                if((i<im->nr/3 || i>im->nr/3*2) || (j<(im->nc/3) || j>(im->nc/3*2)))                 
+                {
+                    if(j<(im->nc/2))
+                        featurePointLeft++;
+                    else
+                        featurePointRight++;
+                }
 	  		}
    		}
    	}
 }
+
+#if 0
+char checkLineDirect(uc1D *pSrc)
+{
+	int i,j;
+    unsigned char x1=0,y1=0,x2=0,y2=0;
+    unsigned char flag =0;
+    
+   	for(i=0;i<pSrc->nr;i++)
+	{
+   		for(j=0;j<pSrc->nc;j++)
+   		{	  
+            if(pSrc->m[i*pSrc->nc+j]==FEATURE_POINT)
+            {
+                if(flag==0 && x1==0)
+                {
+                    x1=j;
+                    y1=i;
+                    continue;
+                }
+                else if(flag==0 && x1!=0)
+                {
+                    if(i==y1+1)
+                    {
+                        flag=1;
+                    }
+                    else
+                    {
+                        //It's noise point.
+                        x1=0;
+                        y1=0;
+                    }
+                }
+                else if(flag==1)
+                {
+                    //Check ifit's noise point.
+                    if(pSrc->m[i*pSrc->nc+j+1]==FEATURE_POINT)
+                    {
+                        x2=j;
+                        y2=i;
+                        continue;
+                    }
+                }
+            }
+        }
+    }
+    
+    if(abs(x1-pSrc->nc/2)>abs(x2-pSrc->nc/2))
+    {
+        if(x1>pSrc->nc/2)
+            return RIGHT;
+        else
+            return LEFT;
+    }                
+    else
+    {
+        if(x2>pSrc->nc/2)
+            return RIGHT;
+        else
+            return LEFT;
+    }
+}
+#endif
 
 int houghLineDetect(uc1D *pSrc)
 {		
@@ -145,8 +210,14 @@ int houghLineDetect(uc1D *pSrc)
 	transform(pSrc, &hough);	
 
     if(featurePointRight>featurePointLeft)
-        maxPoint.angle+=MAX_ANGLE;
-        
+    {
+        if(maxPoint.angle+MAX_ANGLE <= ANGLE_100)
+            maxPoint.angle+=MAX_ANGLE;
+    }
+    
+    if(maxPoint.angle < ANGLE_0)
+        maxPoint.angle=180;
+    
 	value = (int)((maxPoint.angle-ANGLE_0)/scale+0.5);
     
     #if HOUGH_DEBUG    
