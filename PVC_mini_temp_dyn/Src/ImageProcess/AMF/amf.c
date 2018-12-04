@@ -2,7 +2,8 @@
 #include "def_type.h"
 #include "Transmission_mode.h"
 
-#define THRESHOLD 150
+#define THRESHOLD_DIGIT 150
+#define THRESHOLD_WAVE 90
 #define FEATURE_POINT 255
 
 #define TRUE 1
@@ -12,6 +13,7 @@ static uc1D gBasic = {0};
 static int gPixelCount = 0;
 
 extern sd_uchar amfBuf[NUM_OF_PIXELS];
+extern ROI gRoi;
 
 static void updateBg(uc1D *pSrc)
 {
@@ -27,9 +29,16 @@ static void updateBg(uc1D *pSrc)
 
 static void markFg(uc1D *pSrc)
 {
+    unsigned char threshold;
+    
+    if(gRoi.type == ROI_TYPE_WAVE)
+        threshold = THRESHOLD_WAVE;
+    else
+        threshold = THRESHOLD_DIGIT;
+    
 	for(int i=0;i <gPixelCount;i++)
 	{
-		if(abs(pSrc->m[i] - gBasic.m[i]) > THRESHOLD)
+		if(abs(pSrc->m[i] - gBasic.m[i]) > threshold)
             pSrc->m[i] = 255;
 		else
             pSrc->m[i] = 0;
