@@ -14,6 +14,8 @@ using namespace VirtualInstrument;
 
 extern int roiType;
 
+static bool bRunThread = FALSE;
+
 MyForm::MyForm()
 {
 	InitializeComponent();
@@ -64,6 +66,9 @@ Void MyForm::connect_Click(System::Object^  sender, System::EventArgs^  e)
 
 	//System::Drawing::Rectangle theRectangle = System::Drawing::Rectangle::Rectangle(50, 50, 200, 200);
 	//ControlPaint::DrawReversibleFrame(theRectangle, Color::FromName("Red"), FrameStyle::Thick);
+
+    oThread = gcnew Thread(gcnew ThreadStart(this, &MyForm::autorunThread));
+    oThread->Start();
 }
 
 void MyForm::UpdateImage()
@@ -342,23 +347,33 @@ void MyForm::autorunThread(/*Object^ state*/)
 {
     while (1)
     {
+        if (bRunThread == FALSE)
+            continue;
+
         MyForm::captureImg();
 
-        Utility::screenCapture();
+        Utility::screenCapture(false);
 
+        //Get result
+        Sleep(3000); //3 seconds
+        Utility::screenCapture(true);
+
+#ifdef DEVLOP_MODE
+        bRunThread = FALSE;
+        continue;
+#endif
         Sleep(10000); //10 seconds
-
     }
 }
 
-Void MyForm::ok_Click(System::Object^  sender, System::EventArgs^  e) 
+Void MyForm::ok_Click(System::Object^  sender, System::EventArgs^  e)
 {
-    int rNum = 0, gNum = 0, bNum=0;
+    int rNum = 0, gNum = 0, bNum = 0;
 
-	printf("[ok_Click]\n");
+    printf("[ok_Click]\n");
 
-	roiDigit->Enabled = false;
-	roiWave->Enabled = false;
+    roiDigit->Enabled = false;
+    roiWave->Enabled = false;
     roiHand->Enabled = false;
 
     //20180414 Simon: Only digit neeeds to filter RGB
@@ -394,13 +409,7 @@ Void MyForm::ok_Click(System::Object^  sender, System::EventArgs^  e)
         isRoi = true;
     }
 
-#ifdef DEVLOP_MODE
-    MyForm::captureImg();
-    Utility::screenCapture();
-#else
-    oThread = gcnew Thread(gcnew ThreadStart(this, &MyForm::autorunThread));
-    oThread->Start();
-#endif
+    bRunThread = true;
 }
 
 Void MyForm::roiDigit_Click(System::Object^  sender, System::EventArgs^  e) 
