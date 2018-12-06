@@ -409,6 +409,21 @@ void Utility::pnpDataCollect(unsigned char *srcImg, int roiH , int roiW)
             *(srcImg + charInfo[i].x + charInfo[i].nc + y*roiW) = 128;
         }
         */
+
+        //Draw the line for 9 equal parts
+        /*
+        printf("Draw the line for 9 equal parts\n");
+        for (int x = 0; x < roiW; x++)
+        {
+            *(srcImg + (roiH/3)*roiW + x) = 150;
+            *(srcImg + (roiH/3*2)*roiW + x) = 150;
+        }
+
+        for (int y = 0; y < roiH; y++)
+        {
+            *(srcImg + roiW/2 + y*roiW) = 150;
+        }
+        */
     }
 }
 
@@ -484,7 +499,7 @@ void Utility::bayer2rgb(unsigned char *pData, unsigned char *cData, int nr, int 
 	}
 }
 
-void Utility::screenCapture()
+void Utility::screenCapture(bool bResult)
 {
     printf("screen capture\n");
 
@@ -493,7 +508,7 @@ void Utility::screenCapture()
     int height = Screen::PrimaryScreen->Bounds.Height;
     Bitmap^ myImage = gcnew Bitmap(width, height);
     Graphics^ g = Graphics::FromImage(myImage);
-    char filePath[50] = { 0 };
+    char filePath[64] = { 0 };
     static int fileIndex = 0;
     time_t now = time(0);
     struct tm*  tstruct = localtime(&now);
@@ -506,8 +521,12 @@ void Utility::screenCapture()
     g->CopyFromScreen(0 - Screen::PrimaryScreen->Bounds.Width, 0, 0, 0, (Drawing::Size)size);
     //IntPtr dc1 = g.GetHdc();
     //g.ReleaseHdc(dc1);
+    
+    if (bResult)
+        sprintf(filePath, "ScreenCap\\%d%d%d_%d_result.bmp", tstruct->tm_year + 1900, tstruct->tm_mon + 1, tstruct->tm_mday, fileIndex++);
+    else
+        sprintf(filePath, "ScreenCap\\%d%d%d_%d.bmp", tstruct->tm_year+1900, tstruct->tm_mon+1, tstruct->tm_mday,fileIndex);
 
-    sprintf(filePath, "ScreenCap\\%d%d%d_%d.bmp", tstruct->tm_year+1900, tstruct->tm_mon+1, tstruct->tm_mday,fileIndex++);
     myImage->Save(gcnew String(filePath));
 
     //myImage->Dispose();
