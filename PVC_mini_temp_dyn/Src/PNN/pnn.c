@@ -152,8 +152,10 @@ static int identifySpecialNum(unsigned char* img,int nc,unsigned char index,int 
         return 1;
     
     //8
+    /*
     if(pnnResult==1 && charNc>4 && verticalLine>2)
         return 8;
+    */
     
     //Identify 2 or 7 by the last 2 points
     /*
@@ -182,11 +184,13 @@ static int identifySpecialNum(unsigned char* img,int nc,unsigned char index,int 
     */
     
     //Identify 6 or 0
+    /*
     if(pnnResult==6)
     {
         if(verticalLine>0)
             return 0;      
     }
+    */
     
     return pnnResult;
 }
